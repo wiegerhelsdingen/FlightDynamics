@@ -7,7 +7,7 @@ This is a temporary script file.
 
 import numpy as np
 from math import *
-from Cit_par import *
+from Cit_par_test import *
 
 
 
@@ -38,7 +38,7 @@ def aperiodic_roll():
 
 
 ######### Spiral motion #############
-def lambda_b_spir():
+def spiral():
     lambda_b_spir = (2 * CL * (Clb * Cnr - Cnb * Clr)) / ((Clp * (CYb * Cnr + 4 * mub * Cnb )) - Cnp * (CYb * Clr + 4 * mub * Clb))
     return lambda_b_spir
 
@@ -50,8 +50,16 @@ def dutchroll():
     C_dutch = 4 * mub * Cnb + CYb * Cnr
     lambda_b_dutch1 = (-B_dutch + np.sqrt(4 * A_dutch * C_dutch - B_dutch **2)) / (2 * A_dutch)
     lambda_b_dutch2 = (-B_dutch - np.sqrt(4 * A_dutch * C_dutch - B_dutch **2)) / (2 * A_dutch)
+    dutch_char = np.poly1d([A_dutch, B_dutch, C_dutch])
+    lambda_b_dutch11 = np.roots(dutch_char)
     return lambda_b_dutch1, lambda_b_dutch2
 ######### Dutch roll motion  case 2 #############
-A_dutch2 =
-B_ dutch2 =
-C_dutch2 =
+def dutchroll_2():
+    A_dutch2 = -2 * mub * KZ2
+    C_dutch2 = -Cnb
+    #B_ dutch = 1/2 * Cnr
+    
+    
+    lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
+    lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
+    return lambda_b_dutch2_1, lambda_b_dutch2_2
