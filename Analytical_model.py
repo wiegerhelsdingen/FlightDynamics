@@ -48,10 +48,14 @@ def dutchroll():
     A_dutch = 8 * mub ** 2 * KZ2
     B_dutch = -2 * mub * (Cnr + 2 * KZ2 * CYb)
     C_dutch = 4 * mub * Cnb + CYb * Cnr
+
+
     lambda_b_dutch1 = (-B_dutch + np.sqrt(4 * A_dutch * C_dutch - B_dutch **2)) / (2 * A_dutch)
     lambda_b_dutch2 = (-B_dutch - np.sqrt(4 * A_dutch * C_dutch - B_dutch **2)) / (2 * A_dutch)
-    return lambda_b_dutch1, lambda_b_dutch2
+    return lambda_b_dutch1, lambda_b_dutch2, lambda_d
+print(dutchroll())
+
 ######### Dutch roll motion  case 2 #############
-A_dutch2 =
-B_ dutch2 =
-C_dutch2 =
+# A_dutch2 =
+# B_ dutch2 =
+# C_dutch2 =
