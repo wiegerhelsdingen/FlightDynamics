@@ -60,6 +60,25 @@ FFR_mat3 = mat3[:,7]* (1/7936.64)   #kg/s
 WF_mat3 = mat3[:,8]* 0.453592       #kg
 TAT_mat3 = mat3[:,9]+273.15         #kelvin  
 #%% CL-alpha curve
+CL = np.zeros(6)
+p = np.zeros(6)
+rho = np.zeros(6)
+L = np.zeros(6)
+V = np.zeros(6)
+M = np.zeros(6)
+T = np.zeros(6)
+for i in range (0,6):
+    p[i] = p0*(1+(lda*(float(h_mat1[i])))/(T0))**(-g0/(R*lda))
+    M[i] = m.sqrt((2/(y-1))*(((1+p0/float(p[i]))*(1+((y-1)/(2*y))*(rho0/p0)*float(IAS_mat1[i])**2)**(y/(y-1))-1)**((y-1)/y)-1))
+    rho[i] = float(p[i])/(R*float(TAT_mat1[i]))
+    L[i] = (M_total - float(WF_mat1[i]))*g0
+    T[i] = float(TAT_mat1[i])/(1+((y-1)/2*float(M[i])**2))
+    V[i] = float(M[i])*m.sqrt(y*R*float(T[i]))
+    CL[i] = 2*float(L[i])/(float(rho[i])*(float(V[i])**2*S))
+#%%
+plt.figure
+plt.plot(np.radians(AOA_mat1),np.flip(CL))
+plt.show()
 
 
 
