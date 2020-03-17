@@ -7,7 +7,7 @@ This is a temporary script file.
 
 import numpy as np
 from math import *
-from Cit_par_test import *
+from Cit_par import *
 
 
 
