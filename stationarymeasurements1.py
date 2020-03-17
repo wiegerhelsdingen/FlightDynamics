@@ -33,35 +33,35 @@ bf_kg = blockfuel*0.453592  #kg
 #mat1 
 h_mat1 = mat1[:,0]*0.3048           # m
 IAS_mat1 = mat1[:,1]*0.514444       # m/s
-AOA_mat1 = mat1[:,2]                #degrees
+TAT_mat1 = mat1[:,2]+273.15         #temperature
 FFL_mat1 = mat1[:,3]* (1/7936.64)   # kg/s
 FFR_mat1 = mat1[:,4]* (1/7936.64)   #kg/s
 WF_mat1 = mat1[:,5]* 0.453592       #kg
-TAT_mat1 = mat1[:,6]+273.15         #kelvin    
+AOA_mat1 = mat1[:,6]                #degree  
 
 #mat2
 h_mat2 = mat2[:,0]*0.3048           # m
 IAS_mat2 = mat2[:,1]*0.514444       # m/s
-AOA_mat2 = mat2[:,2]                #degrees
+TAT_mat2 = mat2[:,2]+273.15         #KELVIN
 DE_mat2 = mat2[:,3]                #degrees
 DETR_mat2 = mat2[:,4]                #degrees
 Fe_mat2 = mat2[:,5]                #N
 FFL_mat2 = mat2[:,6]* (1/7936.64)   # kg/s
 FFR_mat2 = mat2[:,7]* (1/7936.64)   #kg/s
 WF_mat2 = mat2[:,8]* 0.453592       #kg
-TAT_mat2 = mat2[:,9]+273.15         #kelvin  
+AOA_mat2 = mat2[:,9]                #degrees 
 
 #mat3
 h_mat3 = mat3[:,0]*0.3048           # m
 IAS_mat3 = mat3[:,1]*0.514444       # m/s
-AOA_mat3 = mat3[:,2]                #degrees
+TAT_mat3 = mat3[:,2] +273.15        #KELVIN
 DE_mat3 = mat3[:,3]                #degrees
 DETR_mat3 = mat3[:,4]                #degrees
 Fe_mat3 = mat3[:,5]                #N
 FFL_mat3 = mat3[:,6]* (1/7936.64)   # kg/s
 FFR_mat3 = mat3[:,7]* (1/7936.64)   #kg/s
 WF_mat3 = mat3[:,8]* 0.453592       #kg
-TAT_mat3 = mat3[:,9]+273.15         #kelvin  
+AOA_mat3 = mat3[:,9]                #DEGREE  
 
 #constants 
 g0=9.81 #not needed for x cg calculation
@@ -104,7 +104,7 @@ def im_cm(im):
 
 #get pressure at altitude 
 def pressure(hp):
-    p=p0 * (1 + (lamb*hp)/T0) ** (- g0 / lamb * hp)
+    p=p0 * (1 + (lamb*hp)/T0) ** (- g0 / (lamb * hp))
     return p 
 
 #calculated air density from perfect gas law
@@ -195,25 +195,26 @@ W=W_empty+fuel+payload_weight
 # Lift and drag coefficient
 Cl_mat1_list=[]
 alpha=[]
-i=0
 
-for i in range(len(IAS_mat1)):
-    hp=h_mat1
-    ias=IAS_mat1
+
+for i in range(0,len(IAS_mat1)):
+    hp=float(h_mat1[i])
+    ias=float(IAS_mat1[i])
     cas=ias_cas(ias)
     Vc=cas
     p=pressure(hp)
     M=mach(Vc,p)
-    Tm=TAT_mat1
+    Tm=float(TAT_mat1[i])
     T=temperature(Tm, M)
     rho=density(p, T)
     Vt=Vtrue(M, T)
     Cl = (2 * W) / (rho * Vt ** 2 * S)              # Lift coefficient [-]
-    alpha.append(AOA_mat1)
+    a1 = float(AOA_mat1[i])
+    alpha.append(a1)
     Cl_mat1_list.append(Cl)
-    i=i+1
-
-plt.plot(alpha,Cl_mat1_list)
+   
+  
+plt.plot(np.radians(alpha),Cl_mat1_list)
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('lift coefficient [-]')
 plt.show()
