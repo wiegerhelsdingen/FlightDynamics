@@ -14,6 +14,8 @@ th0    =         1    # pitch angle in the stationary flight condition [rad]
 
 
 # Transformation of recorded Parameters
+T_x_alpha = np.array([][1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
+T_x_th = np.array([][1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
 
 
 # Aircraft mass
@@ -63,6 +65,10 @@ KX2    = 0.019
 KZ2    = 0.042
 KXZ    = 0.002
 KY2    = 1.25 * 1.114
+KX2_squared = KX2**2
+KZ2_squared = KZ2**2
+KXZ_squared = KXZ**2
+KY2_squared = KY2**2
 
 # Aerodynamic constants
 

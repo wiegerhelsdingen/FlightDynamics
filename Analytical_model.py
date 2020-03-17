@@ -7,28 +7,50 @@ This is a temporary script file.
 
 import numpy as np
 from math import *
-from Cit_par_test import *
+from Cit_par import *
 
 
 
 ######### Short period motion #############
 def short_period():
-    A_spm = muc ** 2 * KY2      #KY2 is already the squared one
-    B_spm = -2 * muc * (KY2 * CZa + Cmadot + Cmq)
-    C_spm = CZa * Cmq - 2 * muc * Cma
 
-    lambda_c_spm1 = (-B_spm + np.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm)
-    lambda_c_spm2 = (-B_spm - np.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm)
+    #Refined approximation
+    A_spm_1 = 4 * muc ** 2 * KY2_squared      #KY2 is already the squared one
+    B_spm_1 = -2 * muc * (KY2_squared * CZa + Cmadot + Cmq)
+    C_spm_1 = CZa * Cmq - 2 * muc * Cma
+
+    #Coarse approximation
+    A_spm_2 = -2 * muc * KY2_squared
+    B_spm_2 = Cmadot + Cmq
+    C_spm_2 = Cma
+
+    spm_char1 = np.poly1d([A_spm_1, B_spm_1, C_spm_1])
+    lambda_c_spm1 = np.roots(spm_char1)
+
+    spm_char2 = np.poly1d([A_spm_2, B_spm_2, C_spm_2])
+    lambda_c_spm2 = np.roots(spm_char2)
+
     return lambda_c_spm1, lambda_c_spm2
+print(short_period())
 
 ######### Phugoid motion #############
 def phugoid():
-    A_phug = 2 * muc * (CZa * Cmq - 2 * muc * Cma)
-    B_phug = 2 * muc * (CXu * Cma - Cmu * CXa) + Cmq*(CZu * CXa - CXu * CZa)
-    C_phug = CZ0 * (Cmu * CZa - CZu * Cma)
 
-    lambda_c_phug1 = (-B_phug + np.sqrt(4 * A_phug * C_phug - B_phug **2)) / (2 * A_phug)
-    lambda_c_phug2 = (-B_phug - np.sqrt(4 * A_phug * C_phug - B_phug **2)) / (2 * A_phug)
+    #Refined approximation
+    A_phug_1 = 2 * muc * (CZa * Cmq - 2 * muc * Cma)
+    B_phug_1 = 2 * muc * (CXu * Cma - Cmu * CXa) + Cmq*(CZu * CXa - CXu * CZa)
+    C_phug_1 = CZ0 * (Cmu * CZa - CZu * Cma)
+
+    A_phug_2 = -4 * muc ** 2
+    B_phug_2 = 2 * muc * CXu
+    C_phug_2 = -CZu * CZ0
+
+    phug_char1 = np.poly1d([A_phug_1, B_phug_1, C_phug_1])
+    lambda_c_phug1 = np.roots(phug_char1)
+
+    phug_char2 = np.poly1d([A_phug_2, B_phug_2, C_phug_2])
+    lambda_c_phug2 = np.roots(phug_char2)
+
     return lambda_c_phug1, lambda_c_phug2
 
 ######### A-periodic roll motion #############
@@ -61,9 +83,8 @@ def dutchroll_2():
     A_dutch2 = -2 * mub * KZ2
     C_dutch2 = -Cnb
     #B_ dutch = 1/2 * Cnr
-    
-    
+
+
     lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
     lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
     return lambda_b_dutch2_1, lambda_b_dutch2_2
-
