@@ -76,6 +76,7 @@ S=30.00  #m^2
 mf_s=0.048 #kg/sec, standard engine fuel flow per engine
 c= 2.0569 #m, average chord
 b= 15.911 #m, wing span
+A= b**2 / S
 
 rho0=1.225   #kg/m^3 
 p0=101325    #N/m^2 = Pa
@@ -159,49 +160,50 @@ ft_m=0.3048
 masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 
 #passenger weights [kg]
-WP1=masspas[0]*m_inc
-WP2=masspas[1]*m_inc
-WL1=masspas[3]*m_inc
-WR1=masspas[4]*m_inc
-WL2=masspas[5]*m_inc
-WR2=masspas[6]*m_inc
-WL3=masspas[7]*m_inc
-WR3=masspas[8]*m_inc
-WCO=masspas[2]*m_inc
-
+WP1=masspas[0]
+WP2=masspas[1]
+WL1=masspas[3]
+WR1=masspas[4]
+WL2=masspas[5]
+WR2=masspas[6]
+WL3=masspas[7]
+WR3=masspas[8]
+WCO=masspas[2]
+    
 x0=131
 x1=214
 x2=251
 x3=288
 xC=170
 
-#empty weight
-ew_arm=291.65
-ew_moment=W_empty*ew_arm
+payload_weight=WP1+WP2+WL1+WR1+WL2+WR2+WL3+WR3+WCO  #[kg]
+
+def centerogravity(x3R, WF):
+        
+    #empty weight
+    ew_arm=291.65
+    ew_moment=W_empty*ew_arm
+        
+    #fuel
+    fuel=bf_kg - WF #FOR THIS NEEDS TO BE A SEPERATE FUNCTION
+    fuel_moment=fuel*11705.5/100
+        
+    #payload
+    payload_moment=(WP1+WP2)*x0+(WL1+WR1)*x1+(WL2+WR2)*x2+(WL3)*x3+(WR3)*x3R+WCO*xC
     
-#fuel
-fuel=blockfuel #-(ENTER FUNCTION FOR FUEL FLOW HERE)
-fuel_moment=fuel*11705.5/100
-    
-#payload
-payload_moment=(WP1+WP2)*x0+(WL1+WR1)*x1+(WL2+WR2)*x2+(WL3+WR3)*x3+WCO*xC
-payload_weight=WP1+WP2+WL1+WR1+WL2+WR2+WL3+WR3+WCO
-'''
-def centergravity():
-  
     #cg calculation
     xcg_nonsi=(ew_moment+fuel_moment+payload_moment)/(W_empty+fuel+payload_weight)
     xcg=xcg_nonsi*inc_m
-    
+        
     return xcg_nonsi, xcg
-'''
 
-#%%Measurement set 1 
+
+#%% Measurement set 1 
 
 def weight(WF):
-    W=(W_empty+bf_kg+payload_weight- WF)*g0
+    W=(W_empty+bf_kg+payload_weight- WF )* g0
     return W
-
+    
 # Lift and drag coefficient
 Cl_mat1_list=[]
 Cd_mat1_list=[]
@@ -224,8 +226,8 @@ for i in range(0,len(IAS_mat1)):
     #D=drag(a1[i])                                #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
     
     alpha.append(a1)
-    Cl = (2 * W) / (rho * Vt ** 2 * S)              # Lift coefficient [-]
-    #Cd = (2 * D) / (rho * Vt **2 * S)
+    Cl = (2 * W) / (rho * (Vt ** 2) * S)              # Lift coefficient [-]
+    #Cd = (2 * D) / (rho * (Vt **2) * S)
     Cl_mat1_list.append(Cl)
     #Cd_mat1_list.append(Cd)
    
@@ -250,7 +252,7 @@ plt.show()
 
 '''
 #%% Cd-alpha curve
-plt.plot(alpha,Cd_mat1_list)
+plt.scatter(alpha,Cd_mat1_list)
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('drag coefficient [-]')
 plt.grid()
@@ -258,7 +260,6 @@ plt.grid()
 zz=np.polyfit(alpha,Cd_mat1_list,1)
 tt=np.poly1d(zz)
 plt.plot(alpha,tt(alpha),"r-")
-plt.title('Drag coefficient versus angle of attack')
 
 plt.show()
 
@@ -266,7 +267,7 @@ plt.show()
 
 #%% Cl-Cd curve, Cl^2-Cd plot
 
-plt.plot(Cl_mat1_list,Cd_mat1_list)
+plt.scatter(Cl_mat1_list,Cd_mat1_list)
 plt.xlabel('lift coefficient [-]')
 plt.ylabel('drag coefficient [-]')
 plt.grid()
@@ -274,12 +275,16 @@ plt.grid()
 zzz=np.polyfit(alpha,Cd_mat1_list,1)
 ttt=np.poly1d(zzz)
 plt.plot(alpha,ttt(alpha),"r-")
-plt.title('Drag coefficient versus lift coefficient')
 
 plt.show()
 
+Cl2_mat1_list=[]
+for i in range(len(Cl_mat1_list)):
+    Cl2[i]=(Cl_mat1_list[i])**2
+    Cl2_mat1_list.append(Cl2)
+    i=i+1
 
-plt.plot(Cl_mat1_list**2,Cd_mat1_list)
+plt.scatter(Cl2_mat1_list,Cd_mat1_list)
 plt.xlabel('lift coefficient [-]')
 plt.ylabel('drag coefficient [-]')
 plt.grid()
@@ -287,7 +292,6 @@ plt.grid()
 zzz=np.polyfit(alpha,Cd_mat1_list,1)
 ttt=np.poly1d(zzz)
 plt.plot(alpha,ttt(alpha),"r-")
-plt.title('Drag coefficient versus lift coefficient')
 
 plt.show()
 
@@ -296,9 +300,9 @@ plt.show()
 #%% Oswald efficiency factor
 
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
-#dCldCd=
-#e=    
-
+dCddCl2 = 
+e = 1 / (math.pi * A dCLdCd2 )
+print('oswald efficiency factor e =', e)
 
 '''
 
