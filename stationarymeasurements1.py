@@ -199,7 +199,7 @@ def centergravity():
 #%%Measurement set 1 
 
 def weight(WF):
-    W=W_empty+blockfuel+payload_weight- WF
+    W=(W_empty+bf_kg+payload_weight- WF)*g0
     return W
 
 # Lift and drag coefficient
