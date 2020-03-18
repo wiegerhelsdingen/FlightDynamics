@@ -222,7 +222,8 @@ def centerofgravity(x3R, WF):
     #RAMP MASS(RM) CG
     xcg_RM = ((payload_moment + ew_moment+ fuel_moment)/(W_payload + W_empty+ W_fuel))
     return xcg_BEM, xcg_ZFM, xcg_RM
-# plot of xcg rm change due to wf
+### plot of xcg rm change due to wf
+"""
 xcgRM = []
 WF_RM = []
 for i in range(0,len(WF_mat1_lbs)):
@@ -239,6 +240,27 @@ plt.ylabel('WF [kg]')
 plt.xlabel('xcg_RM from tip [m]')
 plt.title('XCG_RM vs WF')
 plt.grid()
+
+### check whether ZFM xcg matches curve for fuel in wing
+xcg1 = []
+FUELinwing1 = []
+for i in range(0,len(FM_WEIGHTS)):
+    WF = float(FM_WEIGHTS[i])
+    FUELinwing = float(blockfuel - WF)*pound_kg
+    xcgs = centerofgravity(x3, WF)
+    xcgRM1 = xcgs[2] 
+    xcg1.append(xcgRM1)
+    FUELinwing1.append(FUELinwing)
+    
+plt.figure
+plt.scatter(xcg1, FUELinwing1)
+plt.scatter(xcgs[1], 0)
+plt.ylabel('FUELinwing [kg]')
+plt.xlabel('xcg_RM from tip [m]')
+plt.title('XCG_RM vs FUELinwing')
+plt.grid()
+"""
+# conclusion: slight discrepancy due to table E2: wing can never be totally empty!
 #%% Measurement set 1 
 
 def weight(WF):
