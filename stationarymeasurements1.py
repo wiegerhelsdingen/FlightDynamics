@@ -31,7 +31,7 @@ mat3 = np.matrix([[7240,165,5.2,0,2.8,0,471,511,735,8.0],
                     [7290,167,5.2,-0.7,2.8,-17,469,	511,773,8.2]])
 
 # paramters
-W_empty = 9165 #kg
+W_empty = 9165*0.453592 #kg
 blockfuel = 4100 #lbs
 masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 
@@ -44,30 +44,33 @@ TAT_mat1 = mat1[:,2]+273.15         #temperature
 FFL_mat1 = mat1[:,3]* (1/7936.64)   # kg/s
 FFR_mat1 = mat1[:,4]* (1/7936.64)   #kg/s
 WF_mat1 = mat1[:,5]* 0.453592       #kg
+WF_mat1_lbs = mat1:,8]              #lbs needed for cg 
 AOA_mat1 = mat1[:,6]                #degree  
 
 #mat2
 h_mat2 = mat2[:,0]*0.3048           # m
 IAS_mat2 = mat2[:,1]*0.514444       # m/s
 TAT_mat2 = mat2[:,2]+273.15         #KELVIN
-DE_mat2 = mat2[:,3]                #degrees
-DETR_mat2 = mat2[:,4]                #degrees
-Fe_mat2 = mat2[:,5]                #N
+DE_mat2 = mat2[:,3]                 #degrees
+DETR_mat2 = mat2[:,4]               #degrees
+Fe_mat2 = mat2[:,5]                 #N
 FFL_mat2 = mat2[:,6]* (1/7936.64)   # kg/s
 FFR_mat2 = mat2[:,7]* (1/7936.64)   #kg/s
 WF_mat2 = mat2[:,8]* 0.453592       #kg
+WF_mat2_lbs = mat2[:,8]              #lbs needed for cg 
 AOA_mat2 = mat2[:,9]                #degrees 
 
 #mat3
 h_mat3 = mat3[:,0]*0.3048           # m
 IAS_mat3 = mat3[:,1]*0.514444       # m/s
 TAT_mat3 = mat3[:,2] +273.15        #KELVIN
-DE_mat3 = mat3[:,3]                #degrees
-DETR_mat3 = mat3[:,4]                #degrees
-Fe_mat3 = mat3[:,5]                #N
+DE_mat3 = mat3[:,3]                 #degrees
+DETR_mat3 = mat3[:,4]               #degrees
+Fe_mat3 = mat3[:,5]                 #N
 FFL_mat3 = mat3[:,6]* (1/7936.64)   # kg/s
 FFR_mat3 = mat3[:,7]* (1/7936.64)   #kg/s
 WF_mat3 = mat3[:,8]* 0.453592       #kg
+WF_mat3_lbs = mat3[:,8]             #lbs needed for cg 
 AOA_mat3 = mat3[:,9]                #DEGREE  
 
 #constants 
