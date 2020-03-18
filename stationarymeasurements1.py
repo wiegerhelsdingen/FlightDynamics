@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 17 17:47:47 2020
+
+@author: tomvancranenburgh, reinier vos
+"""
+
 import numpy as np
 import scipy.io as sc
 import math
@@ -113,13 +120,12 @@ def density(p, T):
     return rho 
 
 def mach(Vc, p):
-    M=math.sqrt( 2/(gamma-1) ((1+ (p0/p)* (1 + (gamma-1 / 2*gamma) * (rho0/p0 ) * Vc^2 )**(gamma/(gamma-1)) -1 ))**((gamma-1)/gamma)-1)
+    M=math.sqrt( (2/(gamma-1)) * ((1+ (p0/p)* ((1 + (gamma-1) / (2*gamma) * (rho0/p0 ) * Vc**2 )**(gamma/(gamma-1)) -1 ))**((gamma-1)/gamma)-1))
     return M
 
 #corrected static air temperature for ram rise
-Tm = TAT_mat1
-def temperature(Tm, M):
-    T = Tm / (1 + (gamma-1)/2 * M**2)    
+def temperature(TAT, M):
+    T = TAT / (1 + (gamma-1)/2 * M**2)    
     return T
 
 #calculate true airspeed
@@ -133,9 +139,12 @@ def Vequivalent(rho):
     return Ve
 
 #drag curve
+#Tp =   #DEFINE Tp HERE
 def drag(Tp, AOA):
     D =  Tp * math.cos(AOA)   #CHECK IF ALPHA IS AOA
     return D
+
+
 
 #%% Center of gravity 
 
@@ -153,7 +162,6 @@ masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 WP1=masspas[0]*m_inc
 WP2=masspas[1]*m_inc
 WL1=masspas[3]*m_inc
-web
 WR1=masspas[4]*m_inc
 WL2=masspas[5]*m_inc
 WR2=masspas[6]*m_inc
@@ -178,7 +186,7 @@ fuel_moment=fuel*11705.5/100
 #payload
 payload_moment=(WP1+WP2)*x0+(WL1+WR1)*x1+(WL2+WR2)*x2+(WL3+WR3)*x3+WCO*xC
 payload_weight=WP1+WP2+WL1+WR1+WL2+WR2+WL3+WR3+WCO
-    
+'''
 def centergravity():
   
     #cg calculation
@@ -186,53 +194,117 @@ def centergravity():
     xcg=xcg_nonsi*inc_m
     
     return xcg_nonsi, xcg
+'''
 
+#%%Measurement set 1 
 
-
-#%% CL-alpha curve
-W=W_empty+fuel+payload_weight
+def weight(WF):
+    W=W_empty+blockfuel+payload_weight- WF
+    return W
 
 # Lift and drag coefficient
 Cl_mat1_list=[]
+Cd_mat1_list=[]
 alpha=[]
-
 
 for i in range(0,len(IAS_mat1)):
     hp=float(h_mat1[i])
     ias=float(IAS_mat1[i])
+    W=float(weight(WF_mat1[i]))
     cas=ias_cas(ias)
     Vc=cas
     p=pressure(hp)
     M=mach(Vc,p)
-    Tm=float(TAT_mat1[i])
-    T=temperature(Tm, M)
+    TAT=float(TAT_mat1[i])
+    T=temperature(TAT, M)
     rho=density(p, T)
     Vt=Vtrue(M, T)
-    Cl = (2 * W) / (rho * Vt ** 2 * S)              # Lift coefficient [-]
     a1 = float(AOA_mat1[i])
+    
+    #D=drag(a1[i])                                #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
+    
     alpha.append(a1)
+    Cl = (2 * W) / (rho * Vt ** 2 * S)              # Lift coefficient [-]
+    #Cd = (2 * D) / (rho * Vt **2 * S)
     Cl_mat1_list.append(Cl)
+    #Cd_mat1_list.append(Cd)
    
-  
-plt.plot(np.radians(alpha),Cl_mat1_list)
+#%% CL-alpha curve
+
+plt.scatter(alpha,Cl_mat1_list)
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('lift coefficient [-]')
+plt.grid()
+
+z=np.polyfit(alpha,Cl_mat1_list,1)
+t=np.poly1d(z)
+plt.plot(alpha,t(alpha),"r-")
+plt.title('Lift coefficient versus angle of attack')
+print("y=%.6fx+%.6f"%(z[0],z[1])) 
+
 plt.show()
 
-#Cd = (2 * D) / (rho * Vt **2 * S) 
-
-#CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
-
-
-
-
-
-
-
+'''
 #%% Cd-alpha curve
+plt.plot(alpha,Cd_mat1_list)
+plt.xlabel('angle of attack [degrees]')
+plt.ylabel('drag coefficient [-]')
+plt.grid()
+
+zz=np.polyfit(alpha,Cd_mat1_list,1)
+tt=np.poly1d(zz)
+plt.plot(alpha,tt(alpha),"r-")
+plt.title('Drag coefficient versus angle of attack')
+
+plt.show()
+
 
 
 #%% Cl-Cd curve, Cl^2-Cd plot
+
+plt.plot(Cl_mat1_list,Cd_mat1_list)
+plt.xlabel('lift coefficient [-]')
+plt.ylabel('drag coefficient [-]')
+plt.grid()
+
+zzz=np.polyfit(alpha,Cd_mat1_list,1)
+ttt=np.poly1d(zzz)
+plt.plot(alpha,ttt(alpha),"r-")
+plt.title('Drag coefficient versus lift coefficient')
+
+plt.show()
+
+
+plt.plot(Cl_mat1_list**2,Cd_mat1_list)
+plt.xlabel('lift coefficient [-]')
+plt.ylabel('drag coefficient [-]')
+plt.grid()
+
+zzz=np.polyfit(alpha,Cd_mat1_list,1)
+ttt=np.poly1d(zzz)
+plt.plot(alpha,ttt(alpha),"r-")
+plt.title('Drag coefficient versus lift coefficient')
+
+plt.show()
+
+
+
+#%% Oswald efficiency factor
+
+#CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
+#dCldCd=
+#e=    
+
+
+'''
+
+
+
+
+
+
+
+
 
 
 
