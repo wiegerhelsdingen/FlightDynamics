@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 17 17:47:47 2020
+
+@author: tomvancranenburgh, reinier vos
+"""
+
 import numpy as np
 import scipy.io as sc
 import math
@@ -33,35 +40,35 @@ bf_kg = blockfuel*0.453592  #kg
 #mat1 
 h_mat1 = mat1[:,0]*0.3048           # m
 IAS_mat1 = mat1[:,1]*0.514444       # m/s
-AOA_mat1 = mat1[:,2]                #degrees
+TAT_mat1 = mat1[:,2]+273.15         #temperature
 FFL_mat1 = mat1[:,3]* (1/7936.64)   # kg/s
 FFR_mat1 = mat1[:,4]* (1/7936.64)   #kg/s
 WF_mat1 = mat1[:,5]* 0.453592       #kg
-TAT_mat1 = mat1[:,6]+273.15         #kelvin    
+AOA_mat1 = mat1[:,6]                #degree  
 
 #mat2
 h_mat2 = mat2[:,0]*0.3048           # m
 IAS_mat2 = mat2[:,1]*0.514444       # m/s
-AOA_mat2 = mat2[:,2]                #degrees
+TAT_mat2 = mat2[:,2]+273.15         #KELVIN
 DE_mat2 = mat2[:,3]                #degrees
 DETR_mat2 = mat2[:,4]                #degrees
 Fe_mat2 = mat2[:,5]                #N
 FFL_mat2 = mat2[:,6]* (1/7936.64)   # kg/s
 FFR_mat2 = mat2[:,7]* (1/7936.64)   #kg/s
 WF_mat2 = mat2[:,8]* 0.453592       #kg
-TAT_mat2 = mat2[:,9]+273.15         #kelvin  
+AOA_mat2 = mat2[:,9]                #degrees 
 
 #mat3
 h_mat3 = mat3[:,0]*0.3048           # m
 IAS_mat3 = mat3[:,1]*0.514444       # m/s
-AOA_mat3 = mat3[:,2]                #degrees
+TAT_mat3 = mat3[:,2] +273.15        #KELVIN
 DE_mat3 = mat3[:,3]                #degrees
 DETR_mat3 = mat3[:,4]                #degrees
 Fe_mat3 = mat3[:,5]                #N
 FFL_mat3 = mat3[:,6]* (1/7936.64)   # kg/s
 FFR_mat3 = mat3[:,7]* (1/7936.64)   #kg/s
 WF_mat3 = mat3[:,8]* 0.453592       #kg
-TAT_mat3 = mat3[:,9]+273.15         #kelvin  
+AOA_mat3 = mat3[:,9]                #DEGREE  
 
 #constants 
 g0=9.81 #not needed for x cg calculation
@@ -69,6 +76,7 @@ S=30.00  #m^2
 mf_s=0.048 #kg/sec, standard engine fuel flow per engine
 c= 2.0569 #m, average chord
 b= 15.911 #m, wing span
+A= b**2 / S
 
 rho0=1.225   #kg/m^3 
 p0=101325    #N/m^2 = Pa
@@ -104,7 +112,7 @@ def im_cm(im):
 
 #get pressure at altitude 
 def pressure(hp):
-    p=p0 * (1 + (lamb*hp)/T0) ** (- g0 / lamb * hp)
+    p=p0 * (1 + (lamb*hp)/T0) ** (- g0 / (lamb * hp))
     return p 
 
 #calculated air density from perfect gas law
@@ -113,13 +121,12 @@ def density(p, T):
     return rho 
 
 def mach(Vc, p):
-    M=math.sqrt( 2/(gamma-1) ((1+ (p0/p)* (1 + (gamma-1 / 2*gamma) * (rho0/p0 ) * Vc^2 )**(gamma/(gamma-1)) -1 ))**((gamma-1)/gamma)-1)
+    M=math.sqrt( (2/(gamma-1)) * ((1+ (p0/p)* ((1 + (gamma-1) / (2*gamma) * (rho0/p0 ) * Vc**2 )**(gamma/(gamma-1)) -1 ))**((gamma-1)/gamma)-1))
     return M
 
 #corrected static air temperature for ram rise
-Tm = TAT_mat1
-def temperature(Tm, M):
-    T = Tm / (1 + (gamma-1)/2 * M**2)    
+def temperature(TAT, M):
+    T = TAT / (1 + (gamma-1)/2 * M**2)    
     return T
 
 #calculate true airspeed
@@ -133,9 +140,12 @@ def Vequivalent(rho):
     return Ve
 
 #drag curve
+#Tp =   #DEFINE Tp HERE
 def drag(Tp, AOA):
     D =  Tp * math.cos(AOA)   #CHECK IF ALPHA IS AOA
     return D
+
+
 
 #%% Center of gravity 
 
@@ -150,88 +160,159 @@ ft_m=0.3048
 masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 
 #passenger weights [kg]
-WP1=masspas[0]*m_inc
-WP2=masspas[1]*m_inc
-WL1=masspas[3]*m_inc
-web
-WR1=masspas[4]*m_inc
-WL2=masspas[5]*m_inc
-WR2=masspas[6]*m_inc
-WL3=masspas[7]*m_inc
-WR3=masspas[8]*m_inc
-WCO=masspas[2]*m_inc
-
+WP1=masspas[0]
+WP2=masspas[1]
+WL1=masspas[3]
+WR1=masspas[4]
+WL2=masspas[5]
+WR2=masspas[6]
+WL3=masspas[7]
+WR3=masspas[8]
+WCO=masspas[2]
+    
 x0=131
 x1=214
 x2=251
 x3=288
 xC=170
 
-#empty weight
-ew_arm=291.65
-ew_moment=W_empty*ew_arm
+payload_weight=WP1+WP2+WL1+WR1+WL2+WR2+WL3+WR3+WCO  #[kg]
+
+def centerogravity(x3R, WF):
+        
+    #empty weight
+    ew_arm=291.65
+    ew_moment=W_empty*ew_arm
+        
+    #fuel
+    fuel=bf_kg - WF #FOR THIS NEEDS TO BE A SEPERATE FUNCTION
+    fuel_moment=fuel*11705.5/100
+        
+    #payload
+    payload_moment=(WP1+WP2)*x0+(WL1+WR1)*x1+(WL2+WR2)*x2+(WL3)*x3+(WR3)*x3R+WCO*xC
     
-#fuel
-fuel=blockfuel #-(ENTER FUNCTION FOR FUEL FLOW HERE)
-fuel_moment=fuel*11705.5/100
-    
-#payload
-payload_moment=(WP1+WP2)*x0+(WL1+WR1)*x1+(WL2+WR2)*x2+(WL3+WR3)*x3+WCO*xC
-payload_weight=WP1+WP2+WL1+WR1+WL2+WR2+WL3+WR3+WCO
-    
-def centergravity():
-  
     #cg calculation
     xcg_nonsi=(ew_moment+fuel_moment+payload_moment)/(W_empty+fuel+payload_weight)
     xcg=xcg_nonsi*inc_m
-    
+        
     return xcg_nonsi, xcg
 
 
+#%% Measurement set 1 
 
-#%% CL-alpha curve
-W=W_empty+fuel+payload_weight
-
+def weight(WF):
+    W=(W_empty+bf_kg+payload_weight- WF )* g0
+    return W
+    
 # Lift and drag coefficient
 Cl_mat1_list=[]
+Cd_mat1_list=[]
 alpha=[]
-i=0
 
-for i in range(len(IAS_mat1)):
-    hp=h_mat1
-    ias=IAS_mat1
+for i in range(0,len(IAS_mat1)):
+    hp=float(h_mat1[i])
+    ias=float(IAS_mat1[i])
+    W=float(weight(WF_mat1[i]))
     cas=ias_cas(ias)
     Vc=cas
     p=pressure(hp)
     M=mach(Vc,p)
-    Tm=TAT_mat1
-    T=temperature(Tm, M)
+    TAT=float(TAT_mat1[i])
+    T=temperature(TAT, M)
     rho=density(p, T)
     Vt=Vtrue(M, T)
-    Cl = (2 * W) / (rho * Vt ** 2 * S)              # Lift coefficient [-]
-    alpha.append(AOA_mat1)
+    a1 = float(AOA_mat1[i])
+    
+    #D=drag(a1[i])                                #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
+    
+    alpha.append(a1)
+    Cl = (2 * W) / (rho * (Vt ** 2) * S)              # Lift coefficient [-]
+    #Cd = (2 * D) / (rho * (Vt **2) * S)
     Cl_mat1_list.append(Cl)
-    i=i+1
-
-plt.plot(alpha,Cl_mat1_list)
-plt.xlabel('angle of attack [degrees]')
+    #Cd_mat1_list.append(Cd)
+   
+#%% CL-alpha curve
+# change alpha0 to root location when you know trendline
+# alpha0 = -0.014704
+# rootcl = 0
+#alpha.insert(0,alpha0)
+#Cl_mat1_list.insert(0,rootcl)
+plt.scatter(alpha,Cl_mat1_list)
+plt.xlabel('angle of attack [radians]')
 plt.ylabel('lift coefficient [-]')
+plt.grid()
+
+z=np.polyfit(alpha,Cl_mat1_list,1)
+t=np.poly1d(z)
+plt.plot(alpha,t(alpha),"r-")
+plt.title('Lift coefficient versus angle of attack')
+print("y=%.6fx+%.6f"%(z[0],z[1])) 
+
 plt.show()
 
-#Cd = (2 * D) / (rho * Vt **2 * S) 
-
-#CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
-
-
-
-
-
-
-
+'''
 #%% Cd-alpha curve
+plt.scatter(alpha,Cd_mat1_list)
+plt.xlabel('angle of attack [degrees]')
+plt.ylabel('drag coefficient [-]')
+plt.grid()
+
+zz=np.polyfit(alpha,Cd_mat1_list,1)
+tt=np.poly1d(zz)
+plt.plot(alpha,tt(alpha),"r-")
+
+plt.show()
+
 
 
 #%% Cl-Cd curve, Cl^2-Cd plot
+
+plt.scatter(Cl_mat1_list,Cd_mat1_list)
+plt.xlabel('lift coefficient [-]')
+plt.ylabel('drag coefficient [-]')
+plt.grid()
+
+zzz=np.polyfit(alpha,Cd_mat1_list,1)
+ttt=np.poly1d(zzz)
+plt.plot(alpha,ttt(alpha),"r-")
+
+plt.show()
+
+Cl2_mat1_list=[]
+for i in range(len(Cl_mat1_list)):
+    Cl2[i]=(Cl_mat1_list[i])**2
+    Cl2_mat1_list.append(Cl2)
+    i=i+1
+
+plt.scatter(Cl2_mat1_list,Cd_mat1_list)
+plt.xlabel('lift coefficient [-]')
+plt.ylabel('drag coefficient [-]')
+plt.grid()
+
+zzz=np.polyfit(alpha,Cd_mat1_list,1)
+ttt=np.poly1d(zzz)
+plt.plot(alpha,ttt(alpha),"r-")
+
+plt.show()
+
+
+
+#%% Oswald efficiency factor
+
+#CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
+dCddCl2 = 
+e = 1 / (math.pi * A dCLdCd2 )
+print('oswald efficiency factor e =', e)
+
+'''
+
+
+
+
+
+
+
+
 
 
 
