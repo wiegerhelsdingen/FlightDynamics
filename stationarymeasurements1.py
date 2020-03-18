@@ -230,9 +230,13 @@ for i in range(0,len(IAS_mat1)):
     #Cd_mat1_list.append(Cd)
    
 #%% CL-alpha curve
-
+# change alpha0 to root location when you know trendline
+# alpha0 = -0.014704
+# rootcl = 0
+#alpha.insert(0,alpha0)
+#Cl_mat1_list.insert(0,rootcl)
 plt.scatter(alpha,Cl_mat1_list)
-plt.xlabel('angle of attack [degrees]')
+plt.xlabel('angle of attack [radians]')
 plt.ylabel('lift coefficient [-]')
 plt.grid()
 
