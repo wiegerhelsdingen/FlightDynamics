@@ -72,13 +72,12 @@ def recdata(datapath):
     unit = data[-1][0][0][1][0]
     seconds = data[-1][0][0][0].transpose()
     parameters.append([name, unit, seconds])
-    print(0,"| name: ", name,"| unit:", unit)
 
     #Parameters
     for i in range(48):
         value = data[i][0][0][0]
         name = data[i][0][0][2][0][0][0]
-        
+
         unit = data[i][0][0][1][0][0]
         if len(unit) > 0:
             unit = unit[0]
