@@ -10,6 +10,7 @@ from math import *
 from Cit_par import *
 
 
+#Transformations moeten nog!!!
 
 ######### Short period motion #############
 def short_period():
@@ -77,7 +78,7 @@ def phugoid():
 def aperiodic_roll():
     lambda_b_apr = Clp / (4 * mub * KX2)
     t_half = np.log(0.5) * b / (lambda_b_apr * V0)
-    time_cst = -c / (lambda_B_apr * V0)
+    time_cst = -c / (lambda_b_apr * V0)
     return lambda_b_apr, t_half, time_cst
 
 
@@ -98,9 +99,9 @@ def dutchroll():
     dutch_char = np.poly1d([A_dutch, B_dutch, C_dutch])
     lambda_b_dutch = np.roots(dutch_char) #misschien V0/b toevoegen eraan
     period_dutch = 2 * np.pi * b / (lambda_b_dutch[0].imag * V0)
-    t_half = np.log(0.5) * b / (lambda_b_dutch[0].real * V0)
+    t_half_dutch = np.log(0.5) * b / (lambda_b_dutch[0].real * V0)
     zeta_dutch = -lambda_b_dutch[0].real / np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2)
-    omega_n_phug = np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2) * V0/b * np.sqrt(1-zeta_dutch**2)
+    omega_n_dutch = np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2) * V0/b * np.sqrt(1-zeta_dutch**2)
 
     return lambda_b_dutch[0], lambda_b_dutch[1], period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch
 
@@ -114,3 +115,43 @@ def dutchroll_2():
     lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
     lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
     return lambda_b_dutch2_1, lambda_b_dutch2_2
+
+lambda_c_spm1, lambda_c_spm2, period_spm, t_half_spm, zeta_spm, omega_n_spm = short_period()
+lambda_c_phug1, lambda_c_phug2, period_phug, t_half_phug, zeta_phug, omega_n_phug = phugoid()
+
+lambda_b_apr, t_half_apr, time_cst_apr = aperiodic_roll()
+lambda_b_spir, t_half_spir, time_cst_spir = spiral()
+lambda_b_dutch1, lambda_b_dutch2, period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch = dutchroll()
+
+print("short_period")
+print("-----------------------")
+print("eigenvalues:", lambda_c_spm1, lambda_c_spm2)
+print("t_half:", t_half_spm)
+print("zeta:", zeta_spm)
+print("omega_n:", omega_n_spm)
+
+print("phugoid")
+print("-----------------------")
+print("eigenvalues:", lambda_c_phug1, lambda_c_phug2)
+print("t_half:", t_half_phug)
+print("zeta:", zeta_phug)
+print("omega_n:", omega_n_phug)
+
+print("aperiodic roll")
+print("-----------------------")
+print("eigenvalue:", lambda_b_apr)
+print("t_half:", t_half_apr)
+print("time constant", time_cst_apr)
+
+print("spiral")
+print("-----------------------")
+print("eigenvalue:", lambda_b_spir)
+print("t_half:", t_half_spir)
+print("time constant", time_cst_spir)
+
+print("dutchroll")
+print("-----------------------")
+print("eigenvalues:", lambda_c_phug1, lambda_c_phug2)
+print("t_half:", t_half_phug)
+print("zeta:", zeta_phug)
+print("omega_n:", omega_n_phug)
