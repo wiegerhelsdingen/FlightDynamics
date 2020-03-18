@@ -44,7 +44,7 @@ TAT_mat1 = mat1[:,2]+273.15         #temperature
 FFL_mat1 = mat1[:,3]* (1/7936.64)   # kg/s
 FFR_mat1 = mat1[:,4]* (1/7936.64)   #kg/s
 WF_mat1 = mat1[:,5]* 0.453592       #kg
-WF_mat1_lbs = mat1:,8]              #lbs needed for cg 
+WF_mat1_lbs = mat1[:,5]              #lbs needed for cg 
 AOA_mat1 = mat1[:,6]                #degree  
 
 #mat2
