@@ -152,7 +152,8 @@ def drag(Tp, AOA):
 FM_MOMENTS = [298.16, 591.18,879.08,1165.42,1448.40,1732.53,2014.80,2298.84,2581.92,2866.30,3150.18,3434.52,3718.52,4003.23,4287.76,4572.24,
                4856.56,5141.16,5425.64,5709.90,5994.04,6278.47,6562.82,6846.96,7131.00,7415.33,7699.60,7984.34,8269.06,8554.05,8839.04,9124.80,
                9410.62,9696.97,9983.40,10270.08,10556.84,10843.87,11131.00,11418.20,11705.50,11993.31,12281.18,12569.04,12856.86,13144.73,
-               13432.48,13720.56,14008.46,14320.34] # ALL FUEL MOMENTS
+               13432.48,13720.56,14008.46,14320.34] # ALL FUEL MOMENTS GIVEN
+FM_MOMENTS = [i * 100 for i in FM_MOMENTS] # ALL FUEL MOMENTS * 100
 FM_WEIGHTS = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,2600,2700,2800,
               2900,3000,3100,3200,3300,3400,3500,3600,3700,3800,3900,4000,4100,4200,4300,4400,4500,4600,4700,4800,4900,5008,] #ALL FUEL MASSES
 ### OBTAINING POLYNOMIAL -> COPY THIS TO CG FUEL CALC
@@ -207,20 +208,37 @@ def centerofgravity(x3R, WF):
     #WF has to be an entry of the WF_MAT_LBS matrices,  not the [kg] ones!
     #empty weight
     ew_arm=291.65*inc_m # [m] mass balance report
-    ew_moment=W_empty*ew_arm 
+    ew_moment=W_empty*ew_arm  # [kg m]
     xcg_BEM = 291.65*inc_m
     #payload 
-    payload_moment=(WP1+WP2)*x0+(WL1+WR1)*x1+(WL2+WR2)*x2+(WL3)*x3+(WR3)*x3R+WCO*xC
+    payload_moment=(WP1+WP2)*x0+(WL1+WR1)*x1+(WL2+WR2)*x2+(WL3)*x3+(WR3)*x3R+WCO*xC # [kg m]
     #ZFM CG
-    xcg_ZFM = (payload_moment + ew_moment)/(W_payload + W_empty)
+    xcg_ZFM = (payload_moment + ew_moment)/(W_payload + W_empty) # [m ]
     #fuel
-    W_fuel= blockfuel - WF            # [lbs]!!!
-    fuel_moment_lbs = 2.852562*W_fuel +9.895738 # polynomial obtained earlier (has to be changed manually)
-    fuel_moment= fuel_moment_lbs/lbsin_kgm    #from inch lbs to kg m
+    W_fuel_lbs= float(blockfuel - WF)            # [lbs]!!!
+    W_fuel= float(blockfuel - WF)*pound_kg      #[kg]
+    fuel_moment_lbs = 285.2562*W_fuel_lbs +989.5738 # polynomial obtained earlier (has to be changed manually)
+    fuel_moment= fuel_moment_lbs*lbsin_kgm   #from lbs in to kg m , current unit [kg  m]
     #RAMP MASS(RM) CG
-    xcg_RM = ((payload_moment + ew_moment+ fuel_moment)/(W_payload + W_empty+ W_fuel))*inc_m
+    xcg_RM = ((payload_moment + ew_moment+ fuel_moment)/(W_payload + W_empty+ W_fuel))
     return xcg_BEM, xcg_ZFM, xcg_RM
+# plot of xcg rm change due to wf
+xcgRM = []
+WF_RM = []
+for i in range(0,len(WF_mat1_lbs)):
+    
+    WF = float(WF_mat1_lbs[i])
+    xcgs = centerofgravity(x3, WF)
+    xcgRM1 = xcgs[2] 
+    xcgRM.append(xcgRM1)
+    WF_RM.append(WF)
 
+plt.figure
+plt.scatter(xcgRM, WF_RM)
+plt.ylabel('WF [kg]')
+plt.xlabel('xcg_RM from tip [m]')
+plt.title('XCG_RM vs WF')
+plt.grid()
 #%% Measurement set 1 
 
 def weight(WF):
