@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 18 17:31:04 2020
-
-@author: tomva
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Tue Mar 17 17:47:47 2020
 
 @author: tomvancranenburgh, reinier vos
@@ -107,15 +100,6 @@ R=287.05     #gas constant, [m^2 / K*sec^2]
 lamb=-0.0065 #lambda for ISA pressure calculations
 gamma=1.4    #ratio specific heats
 
-'''
-Ws=60500
-Cm_0=
-Cn_alpha
-Cm_deltaf
-deltaf
-Cm_Tc=
-
-'''
 
 #%% Calibration
 
@@ -312,7 +296,7 @@ for i in range(0,len(IAS_mat1)):
     Vt=Vtrue(M, T)
     a1 = float(AOA_mat1[i])
     Tprop = float(Tp[i])
-    D=drag(Tprop, a1)             #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
+    D=drag(Tprop, a1)             
     
     alpha.append(a1)
     Cl = (2 * W) / (rho * (Vt ** 2) * S)              # Lift coefficient [-]
@@ -321,7 +305,7 @@ for i in range(0,len(IAS_mat1)):
     Cd_mat1_list.append(Cd)
    
 #%% CL-alpha curve
-"""
+
 #ROOT INSERTED
 z=np.polyfit(alpha,Cl_mat1_list,1)
 t=np.poly1d(z)
@@ -355,28 +339,26 @@ tt=np.poly1d(zz)     # change this to polynomial fit instead of linear google de
 plt.plot(alpha,tt(alpha),"r-")
 plt.legend()
 plt.show()
-"""
+
 #%% Cl-Cd curve
-
-
 plt.figure(3)
 plt.scatter(Cd_mat1_list, Cl_mat1_list)
-plt.xlabel('lift coefficient [-]')
-plt.ylabel('drag coefficient [-]')
+plt.xlabel('drag coefficient [-]')
+plt.ylabel('lift coefficient [-]')
 plt.title('LIFT - DRAG')
 plt.grid()
 CDCL=np.polyfit(Cd_mat1_list,Cl_mat1_list,2)
 t2=np.poly1d(CDCL)
 plt.plot(Cd_mat1_list,t2(Cd_mat1_list),"r-")
 plt.show()
-
+   
+#%% Cl^2-Cd plot
 Cl2_mat1_list=[]
 
 for i in range(0, len(Cl_mat1_list)):
     Cl2=(float(Cl_mat1_list[i]))**2
     Cl2_mat1_list.append(Cl2)
     
-# Cl^2-Cd plot
 #ROOT INSERTED
 CL2CD=np.polyfit(Cl2_mat1_list, Cd_mat1_list,1)
 t3=np.poly1d(CL2CD)
@@ -398,15 +380,12 @@ print('CL^2/CD line gradient =',t3[1])
 CL2CDGRAD = t3[1]
 
 
-
-
 #%% Oswald efficiency factor
 
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
 
-"""
 
 #%% Code for center gravity shit
 
@@ -455,12 +434,19 @@ print(delta)
 print('elevator effectivenenss [-] = ', elevator_effectiveness)
 
 
-
-"""
-
 """
 
 #%% Elevator trim curve 
+
+'''
+Ws=60500
+Cm_0=
+Cn_alpha
+Cm_deltaf
+deltaf
+Cm_Tc=
+
+'''
 
 #reduction airspeed
 W= 
@@ -499,9 +485,6 @@ CN_alpha=Cl_alpha #take this from the graph
 delta_e=- 1/(C_m_delta) * (CM0 + (Cm_alpha/CN_alpha) * (W/(0.5*rho*V_e_reduced**2*S) ) + Cm_deltaf*deltaf + Cm_Tc* Tc_s )
 
 """
-
-
-
 
 
 
