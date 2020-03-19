@@ -328,8 +328,8 @@ t=np.poly1d(z)
 
 alphacl0 = -z[1]/z[0]
 rootcl0 = 0
-CLA_CL = Cl_mat1_list
-CLA_ALPHA = alpha
+CLA_CL = Cl_mat1_list.copy()
+CLA_ALPHA = alpha.copy()
 CLA_ALPHA.insert(0,alphacl0)
 CLA_CL.insert(0,rootcl0)
 plt.figure(1)
@@ -382,8 +382,8 @@ CL2CD=np.polyfit(Cl2_mat1_list, Cd_mat1_list,1)
 t3=np.poly1d(CL2CD)
 CL2CD_CL0 = 1/(-t3[1]/t3[0])
 rootCL2CD0 = 0
-CL2CD_CL2 = Cl2_mat1_list
-CL2CD_CD = Cd_mat1_list
+CL2CD_CL2 = Cl2_mat1_list.copy()
+CL2CD_CD = Cd_mat1_list.copy()
 CL2CD_CL2.insert(0,CL2CD_CL0)
 CL2CD_CD.insert(0,rootCL2CD0)
 plt.figure(4)
