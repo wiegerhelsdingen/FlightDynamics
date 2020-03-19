@@ -158,6 +158,7 @@ FM_WEIGHTS = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,
               2900,3000,3100,3200,3300,3400,3500,3600,3700,3800,3900,4000,4100,4200,4300,4400,4500,4600,4700,4800,4900,5008,] #ALL FUEL MASSES
 ### OBTAINING POLYNOMIAL -> COPY THIS TO CG FUEL CALC
 """
+plt.figure(1)
 plt.scatter(FM_WEIGHTS,FM_MOMENTS)
 plt.xlabel('FM_WEIGHTS')
 plt.ylabel('FM_MOMENTS')
@@ -234,7 +235,7 @@ for i in range(0,len(WF_mat1_lbs)):
     xcgRM.append(xcgRM1)
     WF_RM.append(WF)
 
-plt.figure
+plt.figure(2)
 plt.scatter(xcgRM, WF_RM)
 plt.ylabel('WF [kg]')
 plt.xlabel('xcg_RM from tip [m]')
@@ -252,7 +253,7 @@ for i in range(0,len(FM_WEIGHTS)):
     xcg1.append(xcgRM1)
     FUELinwing1.append(FUELinwing)
     
-plt.figure
+plt.figure(3)
 plt.scatter(xcg1, FUELinwing1)
 plt.scatter(xcgs[1], 0)
 plt.ylabel('FUELinwing [kg]')
@@ -300,6 +301,7 @@ alphacl0 = -0.87444612
 rootcl0 = 0
 alpha.insert(0,alphacl0)
 Cl_mat1_list.insert(0,rootcl0)
+plt.figure(4)
 plt.scatter(alpha,Cl_mat1_list)
 plt.xlabel('angle of attack [radians]')
 plt.ylabel('lift coefficient [-]')
@@ -315,6 +317,7 @@ plt.show()
 
 '''
 #%% Cd-alpha curve
+plt.figure(5)
 plt.scatter(alpha,Cd_mat1_list)
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('drag coefficient [-]')
@@ -329,7 +332,7 @@ plt.show()
 
 
 #%% Cl-Cd curve, Cl^2-Cd plot
-
+plt.figure(6)
 plt.scatter(Cl_mat1_list,Cd_mat1_list)
 plt.xlabel('lift coefficient [-]')
 plt.ylabel('drag coefficient [-]')
@@ -347,6 +350,7 @@ for i in range(len(Cl_mat1_list)):
     Cl2_mat1_list.append(Cl2)
     i=i+1
 
+plt.figure(7)
 plt.scatter(Cl2_mat1_list,Cd_mat1_list)
 plt.xlabel('lift coefficient [-]')
 plt.ylabel('drag coefficient [-]')
