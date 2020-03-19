@@ -380,7 +380,7 @@ for i in range(0, len(Cl_mat1_list)):
 #ROOT INSERTED
 CL2CD=np.polyfit(Cl2_mat1_list, Cd_mat1_list,1)
 t3=np.poly1d(CL2CD)
-CL2CD_CL0 = 1/(-t3[1]/t3[0])
+CL2CD_CL0 = -t3[0]/t3[1]
 rootCL2CD0 = 0
 CL2CD_CL2 = Cl2_mat1_list.copy()
 CL2CD_CD = Cd_mat1_list.copy()
@@ -394,8 +394,8 @@ plt.title('LIFT^2 - DRAG')
 plt.grid()
 plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
 plt.show()
-print('CL^2/CD line gradient =',t3[0])
-CL2CDGRAD = t3[0]
+print('CL^2/CD line gradient =',t3[1])
+CL2CDGRAD = t3[1]
 
 
 
