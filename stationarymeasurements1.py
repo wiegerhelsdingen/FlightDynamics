@@ -458,6 +458,7 @@ print('elevator effectivenenss [-] = ', elevator_effectiveness)
 
 """
 
+"""
 
 #%% Elevator trim curve 
 
