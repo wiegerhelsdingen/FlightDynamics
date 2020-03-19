@@ -311,7 +311,7 @@ for i in range(0,len(IAS_mat1)):
     rho=density(p, T)
     Vt=Vtrue(M, T)
     a1 = float(AOA_mat1[i])
-    Tprop = float(str(Tp))
+    Tprop = float(Tp[i])
     D=drag(Tprop, a1)             #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
     
     alpha.append(a1)
