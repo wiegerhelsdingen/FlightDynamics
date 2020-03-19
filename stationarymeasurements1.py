@@ -298,8 +298,8 @@ for i in range(0,len(IAS_mat1)):
 #change alpha0 to root location when you know trendline, following includes alpha_CL=0 point
 alphacl0 = -0.87444612
 rootcl0 = 0
-alpha.insert(0,alpha0)
-Cl_mat1_list.insert(0,rootcl)
+alpha.insert(0,alphacl0)
+Cl_mat1_list.insert(0,rootcl0)
 plt.scatter(alpha,Cl_mat1_list)
 plt.xlabel('angle of attack [radians]')
 plt.ylabel('lift coefficient [-]')
