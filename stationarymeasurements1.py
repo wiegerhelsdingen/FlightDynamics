@@ -394,7 +394,7 @@ plt.title('LIFT^2 - DRAG')
 plt.grid()
 plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
 plt.show()
-print('CL^2/CD line gradient =',t3[1],t3[0])
+print('CL^2/CD line gradient =',t3[0])
 CL2CDGRAD = t3[0]
 
 
