@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Wed Mar 18 17:31:04 2020
+
+@author: tomva
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Tue Mar 17 17:47:47 2020
 
 @author: tomvancranenburgh, reinier vos
@@ -29,6 +36,14 @@ mat2 = np.matrix([[7120,162,5.5,-0.2,2.6,0,472,513,580,8.5],
 #cg shift 
 mat3 = np.matrix([[7240,165,5.2,0,2.8,0,471,511,735,8.0],
                     [7290,167,5.2,-0.7,2.8,-17,469,	511,773,8.2]])
+
+#thrust computations from thrust.exe, in N?
+thrust = np.matrix([[3349.31, 3756.94],
+                    [2821.05, 3133.59],
+                    [2384.87, 2699.04],
+                    [1876.38, 2208],
+                    [1858.28, 2111.42],
+                    [2104.39, 2495.74]])
 
 # paramters
 W_empty = 9165*0.453592 #kg
@@ -72,6 +87,10 @@ FFR_mat3 = mat3[:,7]* (1/7936.64)   #kg/s
 WF_mat3 = mat3[:,8]* 0.453592       #kg
 WF_mat3_lbs = mat3[:,8]             #lbs needed for cg 
 AOA_mat3 = mat3[:,9]                #DEGREE  
+
+#thrust
+Tleft = thrust[:,0]                  # N
+Tright = thrust[:,1]                 # N
 
 #constants 
 g0=9.81 #not needed for x cg calculation
@@ -158,7 +177,6 @@ FM_WEIGHTS = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,
               2900,3000,3100,3200,3300,3400,3500,3600,3700,3800,3900,4000,4100,4200,4300,4400,4500,4600,4700,4800,4900,5008,] #ALL FUEL MASSES
 ### OBTAINING POLYNOMIAL -> COPY THIS TO CG FUEL CALC
 """
-plt.figure(1)
 plt.scatter(FM_WEIGHTS,FM_MOMENTS)
 plt.xlabel('FM_WEIGHTS')
 plt.ylabel('FM_MOMENTS')
@@ -235,7 +253,7 @@ for i in range(0,len(WF_mat1_lbs)):
     xcgRM.append(xcgRM1)
     WF_RM.append(WF)
 
-plt.figure(2)
+plt.figure
 plt.scatter(xcgRM, WF_RM)
 plt.ylabel('WF [kg]')
 plt.xlabel('xcg_RM from tip [m]')
@@ -253,7 +271,7 @@ for i in range(0,len(FM_WEIGHTS)):
     xcg1.append(xcgRM1)
     FUELinwing1.append(FUELinwing)
     
-plt.figure(3)
+plt.figure
 plt.scatter(xcg1, FUELinwing1)
 plt.scatter(xcgs[1], 0)
 plt.ylabel('FUELinwing [kg]')
@@ -262,6 +280,7 @@ plt.title('XCG_RM vs FUELinwing')
 plt.grid()
 """
 # conclusion: slight discrepancy due to table E2: wing can never be totally empty!
+
 #%% Measurement set 1 
 
 def weight(WF):
@@ -272,6 +291,12 @@ def weight(WF):
 Cl_mat1_list=[]
 Cd_mat1_list=[]
 alpha=[]
+Tp=[]
+
+for i in range(len(Tleft)):
+    Tprop=Tleft[i]+Tright[i]
+    Tp.append(Tprop)
+    
 
 for i in range(0,len(IAS_mat1)):
     hp=float(h_mat1[i])
@@ -286,53 +311,53 @@ for i in range(0,len(IAS_mat1)):
     rho=density(p, T)
     Vt=Vtrue(M, T)
     a1 = float(AOA_mat1[i])
-    
-    #D=drag(a1[i])                                #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
+    Tprop = float(str(Tp))
+    D=drag(Tprop, a1)             #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
     
     alpha.append(a1)
     Cl = (2 * W) / (rho * (Vt ** 2) * S)              # Lift coefficient [-]
-    #Cd = (2 * D) / (rho * (Vt **2) * S)
+    Cd = (2 * D) / (rho * (Vt **2) * S)
     Cl_mat1_list.append(Cl)
-    #Cd_mat1_list.append(Cd)
-   
+    Cd_mat1_list.append(Cd)
+    i=i+1
+'''
 #%% CL-alpha curve
 #change alpha0 to root location when you know trendline, following includes alpha_CL=0 point
 alphacl0 = -0.87444612
 rootcl0 = 0
 alpha.insert(0,alphacl0)
 Cl_mat1_list.insert(0,rootcl0)
-plt.figure(4)
+
 plt.scatter(alpha,Cl_mat1_list)
 plt.xlabel('angle of attack [radians]')
 plt.ylabel('lift coefficient [-]')
+plt.legend()
 plt.grid()
 
 z=np.polyfit(alpha,Cl_mat1_list,1)
 t=np.poly1d(z)
 plt.plot(alpha,t(alpha),"r-")
-plt.title('Lift coefficient versus angle of attack')
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
 
-plt.show()
-
+#plt.show()
 '''
 #%% Cd-alpha curve
-plt.figure(5)
 plt.scatter(alpha,Cd_mat1_list)
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('drag coefficient [-]')
 plt.grid()
 
 zz=np.polyfit(alpha,Cd_mat1_list,1)
-tt=np.poly1d(zz)
+tt=np.poly1d(zz)     # change this to polynomial fit instead of linear google deze shit
 plt.plot(alpha,tt(alpha),"r-")
+plt.legend()
 
 plt.show()
 
-
+'''
 
 #%% Cl-Cd curve, Cl^2-Cd plot
-plt.figure(6)
+
 plt.scatter(Cl_mat1_list,Cd_mat1_list)
 plt.xlabel('lift coefficient [-]')
 plt.ylabel('drag coefficient [-]')
@@ -350,7 +375,6 @@ for i in range(len(Cl_mat1_list)):
     Cl2_mat1_list.append(Cl2)
     i=i+1
 
-plt.figure(7)
 plt.scatter(Cl2_mat1_list,Cd_mat1_list)
 plt.xlabel('lift coefficient [-]')
 plt.ylabel('drag coefficient [-]')
@@ -373,13 +397,51 @@ print('oswald efficiency factor e =', e)
 
 '''
 
+#%% Code for center gravity shit
+
+x3R1=x3          #m
+x3R2=x0
+WF1=WF_mat3[0]   #kg
+WF2=WF_mat3[1]   #kg
+
+sta_ref=261.45*inc_m     #to define center of gravity with respect to imaginary foward end MAC
+xcg1=centerofgravity(x3R1, WF1)[2]-sta_ref
+xcg2=centerofgravity(x3R2, WF2)[2]-sta_ref
+
+delta_xcg=xcg2-xcg1   #this turns out negative, define xcg from MAC for it to become positive??  
+print('center gravity 1', xcg1, 'm', xcg1*m_inc, 'inch')
+print('center gravity 2', xcg2, 'm', xcg2*m_inc, 'inch')
+print('change center gravity', delta_xcg, 'm')   
 
 
+#%% Elevator effectiveness
 
+def elevatoreffectiveness():
+    delta_e1 = DE_mat3[0]
+    delta_e2 = DE_mat3[1]
+    delta_e = delta_e2-delta_e1
+    delta_e_rad = np.radians(delta_e)
+    W3=float(weight(WF_mat3[0]))    # WHICH MEASUREMENT OF THE TWO FOR USED FUEL TO USE HERE?
+    
+    hp3=float(h_mat3[0])            # TAKE AVERAGE OF BOTH VALUES OR ASSUME ONE?
+    ias3=float(IAS_mat3[0])
+    cas3=ias_cas(ias3)
+    Vc3=cas3
+    p3=pressure(hp3)
+    M3=mach(Vc3,p3)
+    TAT3=float(TAT_mat3[0])
+    T3=temperature(TAT3, M3)
+    rho3=density(p3, T3)
+    Vt3=Vtrue(M3, T3)
+    
+    Cm_delta= - (1/ delta_e_rad) * (W3 / (0.5*rho3*(Vt3**2)*S)) *(delta_xcg / c)
+    
+    return Cm_delta, delta_e_rad
 
-
-
-
+elevator_effectiveness=elevatoreffectiveness()[0]
+delta=elevatoreffectiveness()[1]
+print(delta)
+print('elevator effectivenenss [-] = ', elevator_effectiveness)
 
 
 
@@ -425,16 +487,8 @@ CN_alpha=Cl_alpha #take this from the graph
 delta_e=- 1/(C_m_delta) * (CM0 + (Cm_alpha/CN_alpha) * (W/(0.5*rho*V_e_reduced**2*S) ) + Cm_deltaf*deltaf + Cm_Tc* Tc_s )
 
 
-
-#%% Elevator effectiveness
-xcg2= xc( )   #make cg a definition with inputs
-
-delta_xcg=xcg2-xcg1 
-delta_delta_e= delta_e2-delta_e1
-Cm_delta= - (1/ delta_delta_e) * (W / (0.5*rho*Vt**2*S)) *(delta_xcg / c)
-
-
 '''
+
 
 
 
