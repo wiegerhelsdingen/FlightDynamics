@@ -305,7 +305,7 @@ for i in range(0,len(IAS_mat1)):
     Cd_mat1_list.append(Cd)
    
 #%% CL-alpha curve
-
+"""
 #ROOT INSERTED
 z=np.polyfit(alpha,Cl_mat1_list,1)
 t=np.poly1d(z)
@@ -385,7 +385,7 @@ CL2CDGRAD = t3[1]
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
-
+"""
 
 #%% Code for center gravity shit
 
