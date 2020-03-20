@@ -30,6 +30,14 @@ mat2 = np.matrix([[7120,162,5.5,-0.2,2.6,0,472,513,580,8.5],
 mat3 = np.matrix([[7240,165,5.2,0,2.8,0,471,511,735,8.0],
                     [7290,167,5.2,-0.7,2.8,-17,469,	511,773,8.2]])
 
+#thrust computations from thrust.exe, in N?
+thrust = np.matrix([[3349.31, 3756.94],
+                    [2821.05, 3133.59],
+                    [2384.87, 2699.04],
+                    [1876.38, 2208],
+                    [1858.28, 2111.42],
+                    [2104.39, 2495.74]])
+
 # paramters
 W_empty = 9165*0.453592 #kg
 blockfuel = 4100 #lbs
@@ -73,6 +81,10 @@ WF_mat3 = mat3[:,8]* 0.453592       #kg
 WF_mat3_lbs = mat3[:,8]             #lbs needed for cg 
 AOA_mat3 = mat3[:,9]                #DEGREE  
 
+#thrust
+Tleft = thrust[:,0]                  # N
+Tright = thrust[:,1]                 # N
+
 #constants 
 g0=9.81 #not needed for x cg calculation
 S=30.00  #m^2
@@ -88,15 +100,6 @@ R=287.05     #gas constant, [m^2 / K*sec^2]
 lamb=-0.0065 #lambda for ISA pressure calculations
 gamma=1.4    #ratio specific heats
 
-'''
-Ws=60500
-Cm_0=
-Cn_alpha
-Cm_deltaf
-deltaf
-Cm_Tc=
-
-'''
 
 #%% Calibration
 
@@ -145,7 +148,7 @@ def Vequivalent(rho):
 #drag curve
 #Tp =   #DEFINE Tp HERE
 def drag(Tp, AOA):
-    D =  Tp * math.cos(AOA)   #CHECK IF ALPHA IS AOA
+    D =  Tp * math.cos(math.radians(AOA))   #CHECK IF ALPHA IS AOA -> must be radians!
     return D
 
 #%% OBTAIN FUEL MOMENT (FM) POLYNOMIAL FOR CG CALCULATIONS (NOTE: entire section is based on table E2 and is in lbs and inches)
@@ -261,6 +264,7 @@ plt.title('XCG_RM vs FUELinwing')
 plt.grid()
 """
 # conclusion: slight discrepancy due to table E2: wing can never be totally empty!
+
 #%% Measurement set 1 
 
 def weight(WF):
@@ -271,6 +275,12 @@ def weight(WF):
 Cl_mat1_list=[]
 Cd_mat1_list=[]
 alpha=[]
+Tp=[]
+
+for i in range(0,len(Tleft)):
+    Tprop=float(Tleft[i])+float(Tright[i])
+    Tp.append(Tprop)
+    
 
 for i in range(0,len(IAS_mat1)):
     hp=float(h_mat1[i])
@@ -285,104 +295,155 @@ for i in range(0,len(IAS_mat1)):
     rho=density(p, T)
     Vt=Vtrue(M, T)
     a1 = float(AOA_mat1[i])
-    
-    #D=drag(a1[i])                                #FIX THIS, ADD DEFINITION FOR D, Maybe take Tp out of brackets here
+    Tprop = float(Tp[i])
+    D=drag(Tprop, a1)             
     
     alpha.append(a1)
     Cl = (2 * W) / (rho * (Vt ** 2) * S)              # Lift coefficient [-]
-    #Cd = (2 * D) / (rho * (Vt **2) * S)
+    Cd = (2 * D) / (rho * (Vt **2) * S)
     Cl_mat1_list.append(Cl)
-    #Cd_mat1_list.append(Cd)
+    Cd_mat1_list.append(Cd)
    
 #%% CL-alpha curve
-#change alpha0 to root location when you know trendline, following includes alpha_CL=0 point
-alphacl0 = -0.87444612
-rootcl0 = 0
-alpha.insert(0,alpha0)
-Cl_mat1_list.insert(0,rootcl)
-plt.scatter(alpha,Cl_mat1_list)
-plt.xlabel('angle of attack [radians]')
-plt.ylabel('lift coefficient [-]')
-plt.grid()
-
+"""
+#ROOT INSERTED
 z=np.polyfit(alpha,Cl_mat1_list,1)
 t=np.poly1d(z)
-plt.plot(alpha,t(alpha),"r-")
-plt.title('Lift coefficient versus angle of attack')
+
+alphacl0 = -z[1]/z[0]
+rootcl0 = 0
+CLA_CL = Cl_mat1_list.copy()
+CLA_ALPHA = alpha.copy()
+CLA_ALPHA.insert(0,alphacl0)
+CLA_CL.insert(0,rootcl0)
+plt.figure(1)
+plt.scatter(CLA_ALPHA,CLA_CL)
+plt.xlabel('angle of attack [radians]')
+plt.ylabel('lift coefficient [-]')
+plt.legend()
+plt.grid()
+plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-")
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
-
 plt.show()
+CLA_GRAD = z[0]
 
-'''
 #%% Cd-alpha curve
+plt.figure(2)
 plt.scatter(alpha,Cd_mat1_list)
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('drag coefficient [-]')
+plt.title('DRAG - ALPHA')
 plt.grid()
-
-zz=np.polyfit(alpha,Cd_mat1_list,1)
-tt=np.poly1d(zz)
+zz=np.polyfit(alpha,Cd_mat1_list,2)
+tt=np.poly1d(zz)     # change this to polynomial fit instead of linear google deze shit
 plt.plot(alpha,tt(alpha),"r-")
-
+plt.legend()
 plt.show()
 
-
-
-#%% Cl-Cd curve, Cl^2-Cd plot
-
-plt.scatter(Cl_mat1_list,Cd_mat1_list)
-plt.xlabel('lift coefficient [-]')
-plt.ylabel('drag coefficient [-]')
+#%% Cl-Cd curve
+plt.figure(3)
+plt.scatter(Cd_mat1_list, Cl_mat1_list)
+plt.xlabel('drag coefficient [-]')
+plt.ylabel('lift coefficient [-]')
+plt.title('LIFT - DRAG')
 plt.grid()
-
-zzz=np.polyfit(alpha,Cd_mat1_list,1)
-ttt=np.poly1d(zzz)
-plt.plot(alpha,ttt(alpha),"r-")
-
+CDCL=np.polyfit(Cd_mat1_list,Cl_mat1_list,2)
+t2=np.poly1d(CDCL)
+plt.plot(Cd_mat1_list,t2(Cd_mat1_list),"r-")
 plt.show()
-
+   
+#%% Cl^2-Cd plot
 Cl2_mat1_list=[]
-for i in range(len(Cl_mat1_list)):
-    Cl2[i]=(Cl_mat1_list[i])**2
+
+for i in range(0, len(Cl_mat1_list)):
+    Cl2=(float(Cl_mat1_list[i]))**2
     Cl2_mat1_list.append(Cl2)
-    i=i+1
-
-plt.scatter(Cl2_mat1_list,Cd_mat1_list)
-plt.xlabel('lift coefficient [-]')
+    
+#ROOT INSERTED
+CL2CD=np.polyfit(Cl2_mat1_list, Cd_mat1_list,1)
+t3=np.poly1d(CL2CD)
+CL2CD_CL0 = -t3[0]/t3[1]
+rootCL2CD0 = 0
+CL2CD_CL2 = Cl2_mat1_list.copy()
+CL2CD_CD = Cd_mat1_list.copy()
+CL2CD_CL2.insert(0,CL2CD_CL0)
+CL2CD_CD.insert(0,rootCL2CD0)
+plt.figure(4)
+plt.scatter(CL2CD_CL2, CL2CD_CD)
+plt.xlabel('lift coefficient^2 [-]')
 plt.ylabel('drag coefficient [-]')
+plt.title('LIFT^2 - DRAG')
 plt.grid()
-
-zzz=np.polyfit(alpha,Cd_mat1_list,1)
-ttt=np.poly1d(zzz)
-plt.plot(alpha,ttt(alpha),"r-")
-
+plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
 plt.show()
-
+print('CL^2/CD line gradient =',t3[1])
+CL2CDGRAD = t3[1]
 
 
 #%% Oswald efficiency factor
 
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
-dCddCl2 = 
-e = 1 / (math.pi * A dCLdCd2 )
+e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
+"""
+
+#%% Code for center gravity shit
+
+x3R1=x3          #m
+x3R2=x0
+WF1=WF_mat3[0]   #kg
+WF2=WF_mat3[1]   #kg
+
+sta_ref=261.45*inc_m     #to define center of gravity with respect to imaginary foward end MAC
+xcg1=centerofgravity(x3R1, WF1)[2]-sta_ref
+xcg2=centerofgravity(x3R2, WF2)[2]-sta_ref
+
+delta_xcg=xcg2-xcg1   #this turns out negative, define xcg from MAC for it to become positive??  
+print('center gravity 1', xcg1, 'm', xcg1*m_inc, 'inch')
+print('center gravity 2', xcg2, 'm', xcg2*m_inc, 'inch')
+print('change center gravity', delta_xcg, 'm')   
+
+
+#%% Elevator effectiveness
+
+def elevatoreffectiveness():
+    delta_e1 = DE_mat3[0]
+    delta_e2 = DE_mat3[1]
+    delta_e = delta_e2-delta_e1
+    delta_e_rad = np.radians(delta_e)
+    W3=float(weight(WF_mat3[0]))    # WHICH MEASUREMENT OF THE TWO FOR USED FUEL TO USE HERE?
+    
+    hp3=float(h_mat3[0])            # TAKE AVERAGE OF BOTH VALUES OR ASSUME ONE?
+    ias3=float(IAS_mat3[0])
+    cas3=ias_cas(ias3)
+    Vc3=cas3
+    p3=pressure(hp3)
+    M3=mach(Vc3,p3)
+    TAT3=float(TAT_mat3[0])
+    T3=temperature(TAT3, M3)
+    rho3=density(p3, T3)
+    Vt3=Vtrue(M3, T3)
+    
+    Cm_delta= - (1/ delta_e_rad) * (W3 / (0.5*rho3*(Vt3**2)*S)) *(delta_xcg / c)
+    
+    return Cm_delta, delta_e_rad
+
+elevator_effectiveness=elevatoreffectiveness()[0]
+delta=elevatoreffectiveness()[1]
+print(delta)
+print('elevator effectivenenss [-] = ', elevator_effectiveness)
+
+#%% Elevator trim curve, klopt niks van eigenlijk nog, maar heb wat in grote lijnen aan t denken wat er allemaal in moet komen
 
 '''
-
-
-
-
-
-
-
-
-
-
+Ws=60500
+Cm_0=
+Cn_alpha
+Cm_deltaf
+deltaf
+Cm_Tc=
 
 '''
-
-
-#%% Elevator trim curve 
 
 #reduction airspeed
 W= 
@@ -420,19 +481,6 @@ CN_alpha=Cl_alpha #take this from the graph
 
 delta_e=- 1/(C_m_delta) * (CM0 + (Cm_alpha/CN_alpha) * (W/(0.5*rho*V_e_reduced**2*S) ) + Cm_deltaf*deltaf + Cm_Tc* Tc_s )
 
-
-
-#%% Elevator effectiveness
-xcg2= xc( )   #make cg a definition with inputs
-
-delta_xcg=xcg2-xcg1 
-delta_delta_e= delta_e2-delta_e1
-Cm_delta= - (1/ delta_delta_e) * (W / (0.5*rho*Vt**2*S)) *(delta_xcg / c)
-
-
-'''
-
-
-
+"""
 
 
