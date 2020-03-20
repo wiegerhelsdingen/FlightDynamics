@@ -1,21 +1,21 @@
 # Citation 550 - Linear simulation
 
-
+import numpy as np
 from math import *
 
 # xcg = 0.25 * c
 
 # Stationary flight condition
 
-hp0    =      1 	      # pressure altitude in the stationary flight condition [m]
-V0     =       1      # true airspeed in the stationary flight condition [m/sec]
-alpha0 =        1     # angle of attack in the stationary flight condition [rad]
-th0    =         1    # pitch angle in the stationary flight condition [rad]
+hp0    =   	        # pressure altitude in the stationary flight condition [m]
+V0     =            # true airspeed in the stationary flight condition [m/sec]
+alpha0 =            # angle of attack in the stationary flight condition [rad]
+th0    =            # pitch angle in the stationary flight condition [rad]
 
 
 # Transformation of recorded Parameters
-T_x_alpha = np.array([][1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
-T_x_th = np.array([][1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
+T_x_alpha = np.array([[1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
+T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
 
 
 # Aircraft mass
