@@ -2,7 +2,7 @@
 
 import numpy as np
 from math import *
-
+from Validation import
 # xcg = 0.25 * c
 
 # Stationary flight condition
