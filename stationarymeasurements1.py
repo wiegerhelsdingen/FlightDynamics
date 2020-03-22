@@ -100,7 +100,6 @@ R=287.05     #gas constant, [m^2 / K*sec^2]
 lamb=-0.0065 #lambda for ISA pressure calculations
 gamma=1.4    #ratio specific heats
 
-
 #%% Calibration
 
 #convert indicated air speed to calibrated air speed, appendix A
@@ -150,6 +149,16 @@ def Vequivalent(rho):
 def drag(Tp, AOA):
     D =  Tp * math.cos(math.radians(AOA))   #CHECK IF ALPHA IS AOA -> must be radians!
     return D
+  
+Ws = 60500  #N, needed for  reduced airspeed & standardization
+
+def Vreduction(W, Ve):
+    Vred = Ve * math.sqrt(Ws / W)  #Reduced airspeed
+    return (Vred)
+
+def Fstandardization(F, W):
+    Fst = F * Ws/W
+    return(Fst)
 
 #%% OBTAIN FUEL MOMENT (FM) POLYNOMIAL FOR CG CALCULATIONS (NOTE: entire section is based on table E2 and is in lbs and inches)
 FM_MOMENTS = [298.16, 591.18,879.08,1165.42,1448.40,1732.53,2014.80,2298.84,2581.92,2866.30,3150.18,3434.52,3718.52,4003.23,4287.76,4572.24,
@@ -337,11 +346,11 @@ plt.ylabel('drag coefficient [-]')
 plt.title('DRAG - ALPHA')
 plt.grid()
 zz=np.polyfit(alpha,Cd_mat1_list,2)
-tt=np.poly1d(zz)     # change this to polynomial fit instead of linear google deze shit
-
+tt=np.poly1d(zz)    
 plt.plot(alphalist,tt(alphalist),"r-")
 plt.legend()
 plt.show()
+
 #%% Cl-Cd curve
 #(HIGHER ORDER) 
 #THE ROOT (CD0) IS FOUND BY FITTING A 4TH ORDER POLYNOMIAL 
@@ -369,6 +378,7 @@ plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-")
 plt.plot(cdlist,t2(cdlist),"r-")
 plt.show()
 print("CD0=", t2root)
+
 #%% Cl^2-Cd plot
 #FIRST ORDER
 Cl2_mat1_list=[]
