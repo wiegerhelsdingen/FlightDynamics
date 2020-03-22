@@ -113,7 +113,7 @@ def im_cm(im):
     if im>0.4 and im<0.705:
         cm=im-0.007
     else: 
-        im=0
+        cm=0
     return cm
 
 #get pressure at altitude 
@@ -306,12 +306,13 @@ for i in range(0,len(IAS_mat1)):
    
 #%% CL-alpha curve
 """
+#FIRST ORDER
 #ROOT INSERTED
 z=np.polyfit(alpha,Cl_mat1_list,1)
 t=np.poly1d(z)
-
 alphacl0 = -z[1]/z[0]
 rootcl0 = 0
+alphalist = np.linspace(alphacl0,float(max(AOA_mat1)),100)
 CLA_CL = Cl_mat1_list.copy()
 CLA_ALPHA = alpha.copy()
 CLA_ALPHA.insert(0,alphacl0)
@@ -328,6 +329,7 @@ plt.show()
 CLA_GRAD = z[0]
 
 #%% Cd-alpha curve
+#SECOND ORDER
 plt.figure(2)
 plt.scatter(alpha,Cd_mat1_list)
 plt.xlabel('angle of attack [degrees]')
@@ -336,29 +338,47 @@ plt.title('DRAG - ALPHA')
 plt.grid()
 zz=np.polyfit(alpha,Cd_mat1_list,2)
 tt=np.poly1d(zz)     # change this to polynomial fit instead of linear google deze shit
-plt.plot(alpha,tt(alpha),"r-")
+
+plt.plot(alphalist,tt(alphalist),"r-")
 plt.legend()
 plt.show()
-
 #%% Cl-Cd curve
+#(HIGHER ORDER) 
+#THE ROOT (CD0) IS FOUND BY FITTING A 4TH ORDER POLYNOMIAL 
+#THEN THE ROOT IS ADDED AND A 3RD ORDER POLY IS FITTED ON THE RESULT
+ROOTPOLY=np.polyfit(Cd_mat1_list[0:5],Cl_mat1_list[0:5],4)
+ROOTt2=np.poly1d(ROOTPOLY)
+t2root = np.real((np.roots(ROOTt2))[3])
+CLCD_CL = Cl_mat1_list.copy()
+CLCD_CD = Cd_mat1_list.copy()
+CLCD_CL.insert(0,0)
+CLCD_CD.insert(0,t2root)
 plt.figure(3)
-plt.scatter(Cd_mat1_list, Cl_mat1_list)
+plt.scatter(CLCD_CD, CLCD_CL)
 plt.xlabel('drag coefficient [-]')
 plt.ylabel('lift coefficient [-]')
 plt.title('LIFT - DRAG')
 plt.grid()
-CDCL=np.polyfit(Cd_mat1_list,Cl_mat1_list,2)
+CDCL=np.polyfit(CLCD_CD[0:3],CLCD_CL[0:3],3)
 t2=np.poly1d(CDCL)
-plt.plot(Cd_mat1_list,t2(Cd_mat1_list),"r-")
+cdlist = np.linspace(t2root,CLCD_CD[2],100)
+CDCL_rest = np.polyfit(CLCD_CD[2:7],CLCD_CL[2:7],3)
+t2_rest =np.poly1d(CDCL_rest)
+cdlist_rest = np.linspace(CLCD_CD[2],CLCD_CD[6],100)
+plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-")
+plt.plot(cdlist,t2(cdlist),"r-")
 plt.show()
-   
+print("CD0=", t2root)
 #%% Cl^2-Cd plot
+#FIRST ORDER
 Cl2_mat1_list=[]
 
 for i in range(0, len(Cl_mat1_list)):
+
     Cl2=(float(Cl_mat1_list[i]))**2
+
     Cl2_mat1_list.append(Cl2)
-    
+
 #ROOT INSERTED
 CL2CD=np.polyfit(Cl2_mat1_list, Cd_mat1_list,1)
 t3=np.poly1d(CL2CD)
@@ -378,14 +398,12 @@ plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
 plt.show()
 print('CL^2/CD line gradient =',t3[1])
 CL2CDGRAD = t3[1]
-
-
+"""
 #%% Oswald efficiency factor
 
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
-"""
 
 #%% Code for center gravity shit
 

@@ -182,4 +182,4 @@ def numres(hp0,V0,alpha0,th0):
 
     return sys_s, eigenvals_s, sys_a, eigenvals_a
 
-# print('Asymmetric eigenvalues' , np.linalg.eig(A_a)[0])
+print('Asymmetric eigenvalues' , np.linalg.eig(A_a)[0])
