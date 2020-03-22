@@ -71,7 +71,7 @@ AOA_mat2 = mat2[:,2]                #degrees
 #mat3
 h_mat3 = mat3[:,0]*0.3048           # m
 IAS_mat3 = mat3[:,1]*0.514444       # m/s
-TAT_mat3 = mat3[:,2] +273.15        #KELVIN
+TAT_mat3 = mat3[:,9] +273.15        #KELVIN
 DE_mat3 = mat3[:,3]                 #degrees
 DETR_mat3 = mat3[:,4]               #degrees
 Fe_mat3 = mat3[:,5]                 #N
@@ -79,7 +79,7 @@ FFL_mat3 = mat3[:,6]* (1/7936.64)   # kg/s
 FFR_mat3 = mat3[:,7]* (1/7936.64)   #kg/s
 WF_mat3 = mat3[:,8]* 0.453592       #kg
 WF_mat3_lbs = mat3[:,8]             #lbs needed for cg 
-AOA_mat3 = mat3[:,9]                #DEGREE  
+AOA_mat3 = mat3[:,2]                #DEGREE  
 
 #thrust
 Tleft = thrust[:,0]                  # N
