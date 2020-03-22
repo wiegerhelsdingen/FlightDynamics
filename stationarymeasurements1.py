@@ -58,7 +58,7 @@ AOA_mat1 = mat1[:,6]                #degree
 #mat2
 h_mat2 = mat2[:,0]*0.3048           # m
 IAS_mat2 = mat2[:,1]*0.514444       # m/s
-TAT_mat2 = mat2[:,2]+273.15         #KELVIN
+TAT_mat2 = mat2[:,9]+273.15         #KELVIN
 DE_mat2 = mat2[:,3]                 #degrees
 DETR_mat2 = mat2[:,4]               #degrees
 Fe_mat2 = mat2[:,5]                 #N
@@ -66,7 +66,7 @@ FFL_mat2 = mat2[:,6]* (1/7936.64)   # kg/s
 FFR_mat2 = mat2[:,7]* (1/7936.64)   #kg/s
 WF_mat2 = mat2[:,8]* 0.453592       #kg
 WF_mat2_lbs = mat2[:,8]              #lbs needed for cg 
-AOA_mat2 = mat2[:,9]                #degrees 
+AOA_mat2 = mat2[:,2]                #degrees 
 
 #mat3
 h_mat3 = mat3[:,0]*0.3048           # m
@@ -464,10 +464,18 @@ print('elevator effectivenenss [-] = ', elevator_effectiveness)
 #%% cm alpha
 
 Cmdelta = elevator_effectiveness
+alpha2 = []
+De2 = []
+for i in range(0,len(AOA_mat2)):
+    alpha2.append(float(AOA_mat2[i]))
+    De2.append(float(DE_mat2[i]))
 
-u = np.polyfit(a2, ED2, 1)
+DE_A = np.polyfit(alpha2,De2, 1)
+u =np.poly1d(DE_A)
 de_da = u[0]
-
+plt.figure(8)
+plt.scatter(alpha2,De2,)
+plt.show()
 for i in range(0,len(IAS_mat2)):
     hp2=float(h_mat2[i])
     ias2=float(IAS_mat2[i])
@@ -480,14 +488,12 @@ for i in range(0,len(IAS_mat2)):
     T2=temperature(TAT2, M2)
     rho2=density(p2, T2)
     Vt2=Vtrue(M2, T2)
-    
-    a2 = float(AOA_mat2[i])
-    ED2 = float(DE_mat2[i])
 
     Cmalpha = - Cmdelta * de_da
     
 print('Cm alpha = ', Cmalpha)
     
 
+#def elevatortrimcurve():
 #def elevatortrimcurve():
 
