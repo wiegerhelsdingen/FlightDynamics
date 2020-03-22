@@ -105,7 +105,7 @@ gamma=1.4    #ratio specific heats
 
 #convert indicated air speed to calibrated air speed, appendix A
 def ias_cas(ias):
-    cas = ias - 2
+    cas = ias - 2*0.514444
     return cas
 
 #convert inidcated mach number to calibrated mach number WHERE DO WE USE THIS??
