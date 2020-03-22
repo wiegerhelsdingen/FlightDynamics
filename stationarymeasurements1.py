@@ -159,7 +159,7 @@ def Vtrue(M, T):
     return Vt
     
 #equivalent airspeed
-def Vequivalent(rho):
+def Vequivalent(rho, Vt):
     Ve=Vt * math.sqrt(rho/rho0)
     return Ve
 
@@ -533,7 +533,7 @@ for i in range(0,len(IAS_mat2)):
     T2=temperature(TAT2, M2)
     rho2=density(p2, T2)
     Vt2=Vtrue(M2, T2)
-    Veq2 = Vequivalent(rho2)
+    Veq2 = Vequivalent(rho2, Vt2)
     Vred2 = Vreduction(W2, Veq2)
     Tp22 = float(Tp2[i])
     Tp22_s = float(Tp2_s[i])
@@ -541,25 +541,34 @@ for i in range(0,len(IAS_mat2)):
     T_cs = (2*Tp22_s)/(rho2*A_engine*(Vred2**2))
     delta_eq_meas = float(DE_mat2[i])
     delta_red = delta_eq_meas - (1/Cmdelta)*CM_TC*(T_cs-T_c)
-    delta_redlist.append(delta_red)
-    Vred2list.append(Vred2)
+    delta_redlist.append(float(delta_red))
+    Vred2list.append(float(Vred2))
     Fe = float(Fe_mat2[i])
     Fst = Fe * (Ws/W2)
-    Fstlist.append(Fst)
+    Fstlist.append(float(Fst))
 
 
+deltaveq = np.polyfit(Vred2list,delta_redlist,2)
+dveq = np.poly1d(deltaveq)
+FeVeq =np.polyfit(Vred2list,Fstlist,2)
+Fveq = np.poly1d(FeVeq)
+vlist = np.linspace(min(Vred2list),max(Vred2list),100)
 plt.figure(7)
 plt.scatter(Vred2list, delta_redlist)
 plt.grid()
 plt.xlabel('Reduced velocity [m/s]')
 plt.ylabel('Reduced elevator deflection [m]')
-plt.title('Reduced velocity [m/s] - Reduced elevator deflection [m]')
+plt.plot(vlist,dveq(vlist),"r-")
+plt.gca().invert_yaxis()
+plt.title('Reduced velocity [m/s] vs. Reduced elevator deflection [m]')
 plt.show()
 
 plt.figure(8)
 plt.scatter(Vred2list, Fstlist)
 plt.xlabel('Reduced velocity [m/s]')
 plt.ylabel('Elevator force [N]')
-plt.title('Reduced velocity [m/s] - Elevator force [N]')
+plt.gca().invert_yaxis()
+plt.plot(vlist,Fveq(vlist),"r-")
+plt.title('Reduced velocity [m/s] vs. Elevator force [N]')
 plt.grid()
 plt.show()
