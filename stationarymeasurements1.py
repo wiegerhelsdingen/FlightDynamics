@@ -159,9 +159,8 @@ def Vreduction(W, Ve):
 def Fstandardization(F, W):
     Fst = F * Ws/W
     return(Fst)
-def thrust_s(Tp, W):
-    T_s = Tp * Ws/W
-    return(T_s)
+
+  
 #%% OBTAIN FUEL MOMENT (FM) POLYNOMIAL FOR CG CALCULATIONS (NOTE: entire section is based on table E2 and is in lbs and inches)
 FM_MOMENTS = [298.16, 591.18,879.08,1165.42,1448.40,1732.53,2014.80,2298.84,2581.92,2866.30,3150.18,3434.52,3718.52,4003.23,4287.76,4572.24,
                4856.56,5141.16,5425.64,5709.90,5994.04,6278.47,6562.82,6846.96,7131.00,7415.33,7699.60,7984.34,8269.06,8554.05,8839.04,9124.80,
