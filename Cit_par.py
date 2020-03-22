@@ -2,21 +2,18 @@
 
 import numpy as np
 from math import *
-from Validation import
 # xcg = 0.25 * c
 
-# Stationary flight condition
+# # Stationary flight condition
+# hp0    =   	        # pressure altitude in the stationary flight condition [m]
+# V0     =            # true airspeed in the stationary flight condition [m/sec]
+# alpha0 =            # angle of attack in the stationary flight condition [rad]
+# th0    =            # pitch angle in the stationary flight condition [rad]
 
-hp0    =   	        # pressure altitude in the stationary flight condition [m]
-V0     =            # true airspeed in the stationary flight condition [m/sec]
-alpha0 =            # angle of attack in the stationary flight condition [rad]
-th0    =            # pitch angle in the stationary flight condition [rad]
 
-
-# Transformation of recorded Parameters
-T_x_alpha = np.array([[1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
-T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
-
+# # Transformation of recorded Parameters
+# T_x_alpha = np.array([[1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
+# T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
 
 # Aircraft mass
 m      =      1000       # mass [kg]
@@ -31,7 +28,6 @@ Cma    = -0.5626     # longitudinal stabilty [ ]
 Cmde   = -1.1642     # elevator effectiveness [ ]
 
 # Aircraft geometry
-
 S      = 30.00	          # wing area [m^2]
 Sh     = 0.2 * S         # stabiliser area [m^2]
 Sh_S   = Sh / S	          # [ ]
@@ -46,7 +42,6 @@ Vh_V   = 1	          # [ ]
 ih     = -2 * pi / 180   # stabiliser angle of incidence [rad]
 
 # Constant values concerning atmosphere and gravity
-
 rho0   = 1.2250          # air density at sea level [kg/m^3]
 a = -0.0065         # temperature gradient in ISA [K/m]
 Temp0  = 288.15          # temperature at sea level in ISA [K]
@@ -58,7 +53,6 @@ rho    = rho0 * ((1+(a * hp0 / Temp0)))**(-((g / (a*R)) + 1))
 W      = m * g            # [N]       (aircraft weight)
 
 # Constant values concerning aircraft inertia
-
 muc    = m / (rho * S * c)
 mub    = m / (rho * S * b)
 KX2    = 0.019
@@ -71,19 +65,16 @@ KXZ_squared = KXZ**2
 KY2_squared = KY2**2
 
 # Aerodynamic constants
-
 Cmac   = 0                      # Moment coefficient about the aerodynamic centre [ ]
 CNwa   = CLa                    # Wing normal force slope [ ]
 CNha   = 2 * pi * Ah / (Ah + 2) # Stabiliser normal force slope [ ]
 depsda = 4 / (A + 2)            # Downwash gradient [ ]
 
 # Lift and drag coefficient
-
 CL = 2 * W / (rho * V0 ** 2 * S)              # Lift coefficient [ ]
 CD = CD0 + (CLa * alpha0) ** 2 / (pi * A * e) # Drag coefficient [ ]
 
 # Stabiblity derivatives
-
 CX0    = W * sin(th0) / (0.5 * rho * V0 ** 2 * S)
 CXu    = -0.02792
 CXa    = +0.47966		# Positive! (has been erroneously negative since 1993)
