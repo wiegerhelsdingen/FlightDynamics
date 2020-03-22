@@ -189,4 +189,4 @@ D_a = np.zeros((4,2))
 
 sys_a = ctrl.ss(A_a, B_a, C_a, D_a)
 
-# print('Asymmetric eigenvalues' , np.linalg.eig(A_a)[0])
+print('Asymmetric eigenvalues' , np.linalg.eig(A_a)[0])
