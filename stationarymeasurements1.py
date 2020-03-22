@@ -461,14 +461,33 @@ delta=elevatoreffectiveness()[1]
 print(delta)
 print('elevator effectivenenss [-] = ', elevator_effectiveness)
 
-# cm alpha
+#%% cm alpha
 
+Cmdelta = elevator_effectiveness
 
-u = np.polyfit(alpha, elevatordeflectionlist, 1) #first-degree polynomial fitting to find gradient de/da
+u = np.polyfit(a2, ED2, 1)
+de_da = u[0]
 
-def Cmalpha():
-    de_da = u[0]
-    Cmalpha = - Cmdelta * de_da
-    return(Cmalpha)
+for i in range(0,len(IAS_mat2)):
+    hp2=float(h_mat2[i])
+    ias2=float(IAS_mat2[i])
+    W2=float(weight(WF_mat2[i]))
+    cas2=ias_cas(ias)
+    Vc2=cas2
+    p2=pressure(hp2)
+    M2=mach(Vc2,p2)
+    TAT2=float(TAT_mat2[i])
+    T2=temperature(TAT2, M2)
+    rho2=density(p2, T2)
+    Vt2=Vtrue(M2, T2)
     
-def elevatortrimcurve():
+    a2 = float(AOA_mat2[i])
+    ED2 = float(DE_mat2[i])
+
+    Cmalpha = - Cmdelta * de_da
+    
+print('Cm alpha = ', Cmalpha)
+    
+
+#def elevatortrimcurve():
+
