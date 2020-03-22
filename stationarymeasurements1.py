@@ -113,7 +113,7 @@ def im_cm(im):
     if im>0.4 and im<0.705:
         cm=im-0.007
     else: 
-        im=0
+        cm=0
     return cm
 
 #get pressure at altitude 
