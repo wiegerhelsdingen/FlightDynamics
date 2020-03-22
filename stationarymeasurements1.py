@@ -472,7 +472,7 @@ for i in range(0,len(AOA_mat2)):
 
 DE_A = np.polyfit(alpha2,De2, 1)
 u =np.poly1d(DE_A)
-de_da = u[0]
+de_da = u[1]
 plt.figure(8)
 plt.scatter(alpha2,De2,)
 plt.show()
