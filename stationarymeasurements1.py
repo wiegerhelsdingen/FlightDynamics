@@ -455,7 +455,7 @@ plt.show()
 #%% Code for center gravity shit
 
 x3R1=x3          #m
-x3R2=x0
+x3R2=134*inc_m
 WF1=WF_mat3[0]   #kg
 WF2=WF_mat3[1]   #kg
 
@@ -600,3 +600,4 @@ plt.show()
 
 print("Mach range series 2 =", min(machlist2),"to", max(machlist2))
 print("Reynolds range series 2 (Vt used)= ", min(reynoldslist2),"to",max(reynoldslist2))
+print("C_N_alpha =",C_N)
