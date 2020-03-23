@@ -570,39 +570,7 @@ for i in range(0,len(IAS_mat2)):
     u2 = Dviscosity(T2)
     Re2 = reynolds(rho2,Vt2,u2)
     reynoldslist2.append(Re2)
-"""
-#DONT USE THIS,  MUST ASK TAS
-delta_redlist = []
-Vred2list = []
-Fstlist = []
-for i in range(0,len(IAS_mat2)):
-    hp2=float(h_mat2[i])
-    ias2=float(IAS_mat2[i])
-    W2=float(weight(WF_mat2[i]))
-    cas2=ias_cas(ias2)
-    Vc2=cas2
-    p2=pressure(hp2)
-    M2=mach(Vc2,p2)
-    TAT2=float(TAT_mat2[i])
-    T2=temperature(TAT2, M2)
-    rho2=density(p2, T2)
-    Vt2=Vtrue(M2, T2)
-    Veq2 = Vequivalent(rho2, Vt2)
-    Vred2 = Vreduction(W2, Veq2)
-    Tp22 = float(Tp2[i])
-    Tp22_s = float(Tp2_s[i])
-    T_c = (2*Tp22)/(rho0*A_engine*(Veq2**2))
-    T_cs = (2*Tp22_s)/(rho2*A_engine*(Vred2**2))
-    delta_eq_meas = -(1/Cmdelta)*(Cm0 + (Cmalpha/C_N)*(2*W2/(rho2*(Vred2**2)*S))+CM_TC*T_c)
-    delta_red = delta_eq_meas - (1/Cmdelta)*CM_TC*(T_cs-T_c)
-    delta_red = math.radians(delta_red)
-    delta_redlist.append(float(delta_red))
-    Vred2list.append(float(Vred2))
-    Fe = float(Fe_mat2[i])
-    Fst = Fe * (Ws/W2)
-    Fstlist.append(float(Fst))
-#DONT USE THIS,  MUST ASK TAS
-"""
+
 deltaveq = np.polyfit(Vred2list,delta_redlist,2)
 dveq = np.poly1d(deltaveq)
 FeVeq =np.polyfit(Vred2list,Fstlist,2)
