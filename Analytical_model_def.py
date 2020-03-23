@@ -8,7 +8,8 @@ This is a temporary script file.
 import numpy as np
 from math import *
 import cmath as cmath
-from Cit_par import *
+from parameters import *
+# from Cit_par import *
 
 # # A i r c r a f t & Atmospheric p r op e r t i e s
 # g = 9.81 #m/ s^2
@@ -159,7 +160,6 @@ def dutchroll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     t_half_dutch = np.log(0.5) / lambda_b_dutch[0].real * b/V0
     zeta_dutch = -lambda_b_dutch[0].real / np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2)
     omega_n_dutch = np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2) * V0/b * np.sqrt(1-zeta_dutch**2)
-
     return lambda_b_dutch[0], lambda_b_dutch[1], period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch
 
 
@@ -172,51 +172,3 @@ def dutchroll_2(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
     lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
     return lambda_b_dutch2_1, lambda_b_dutch2_2
-
-lambda_c_spm1, lambda_c_spm2, period_spm, t_half_spm, zeta_spm, omega_n_spm = short_period(V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
-lambda_c_phug1, lambda_c_phug2, period_phug, t_half_phug, zeta_phug, omega_n_phug = phugoid(V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
-lambda_b_apr, t_half_apr, time_cst_apr = aperiodic_roll(V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
-lambda_b_spir, t_half_spir, time_cst_spir = spiral(V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
-lambda_b_dutch1, lambda_b_dutch2, period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch = dutchroll(V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
-
-# lambda_c_spm1, lambda_c_spm2, period_spm, t_half_spm, zeta_spm, omega_n_spm = short_period(V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
-# lambda_c_phug1, lambda_c_phug2, period_phug, t_half_phug, zeta_phug, omega_n_phug = phugoid(V0_phug,m_phug,rho_phug,muc_phug,mub_phug,CL_phug,CD_phug,CX0_phug,CZ0_phug)
-# lambda_b_apr, t_half_apr, time_cst_apr = aperiodic_roll(V0_apr,m_apr,rho_apr,muc_apr,mub_apr,CL_apr,CD_apr,CX0_apr,CZ0_apr)
-# lambda_b_spir, t_half_spir, time_cst_spir = spiral(V0_spir,m_spir,rho_spir,muc_spir,mub_spir,CL_spir,CD_spir,CX0_spir,CZ0_spir)
-# lambda_b_dutch1, lambda_b_dutch2, period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch = dutchroll(V0_dutch1,m_dutch1,rho_dutch1,muc_dutch1,mub_dutch1,CL_dutch1,CD_dutch1,CX0_dutch1,CZ0_dutch1)
-
-print("short_period")
-print("-----------------------")
-print("eigenvalues:", lambda_c_spm1, lambda_c_spm2)
-print("period:",period_spm)
-print("t_half:", t_half_spm)
-print("zeta:", zeta_spm)
-print("omega_n:", omega_n_spm)
-print()
-print("phugoid")
-print("-----------------------")
-print("eigenvalues:", lambda_c_phug1, lambda_c_phug2)
-print("period",period_phug)
-print("t_half:", t_half_phug)
-print("zeta:", zeta_phug)
-print("omega_n:", omega_n_phug)
-print()
-print("aperiodic roll")
-print("-----------------------")
-print("eigenvalue:", lambda_b_apr)
-print("t_half:", t_half_apr)
-print("time constant", time_cst_apr)
-print()
-print("spiral")
-print("-----------------------")
-print("eigenvalue:", lambda_b_spir)
-print("t_half:", t_half_spir)
-print("time constant", time_cst_spir)
-print()
-print("dutchroll")
-print("-----------------------")
-print("eigenvalues:", lambda_b_dutch1, lambda_b_dutch2)
-print("period",period_dutch)
-print("t_half:", t_half_dutch)
-print("zeta:", zeta_dutch)
-print("omega_n:", omega_n_dutch)
