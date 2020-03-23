@@ -338,8 +338,8 @@ for i in range(0,len(IAS_mat1)):
 #Mach & Reynolds number range series 1
 print("Mach range series 1 =", min(machlist1),"to", max(machlist1))
 print("Reynolds range series 1= ", min(reynoldslist1),"to",max(reynoldslist1))
-#%% CL-alpha curve
 
+#%% CL-alpha curve
 #FIRST ORDER
 #ROOT INSERTED
 z=np.polyfit(alpha,Cl_mat1_list,1)
@@ -353,30 +353,28 @@ CLA_ALPHA.insert(0,alphacl0)
 CLA_CL.insert(0,rootcl0)
 
 plt.figure(1)
-plt.scatter(CLA_ALPHA,CLA_CL)
+plt.scatter(CLA_ALPHA,CLA_CL, label='Measured data')
 plt.xlabel('angle of attack [radians]')
 plt.ylabel('lift coefficient [-]')
-plt.legend()
 plt.grid()
-plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-")
+plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-", label='Regression line')
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
+plt.legend(loc ="upper left")
 plt.show()
-
 CLA_GRAD = z[0]
 
 #%% Cd-alpha curve
-
 #SECOND ORDER
 plt.figure(2)
-plt.scatter(alpha,Cd_mat1_list)
+plt.scatter(alpha,Cd_mat1_list, label='Measured data')
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('drag coefficient [-]')
 plt.title('DRAG - ALPHA')
 plt.grid()
 zz=np.polyfit(alpha,Cd_mat1_list,2)
 tt=np.poly1d(zz)    
-plt.plot(alphalist,tt(alphalist),"r-")
-plt.legend()
+plt.plot(alphalist,tt(alphalist),"r-", label='Regression line')
+plt.legend(loc ="upper left")
 plt.show()
 
 #%% Cl-Cd curve
@@ -392,7 +390,7 @@ CLCD_CL.insert(0,0)
 CLCD_CD.insert(0,t2root)
 
 plt.figure(3)
-plt.scatter(CLCD_CD, CLCD_CL)
+plt.scatter(CLCD_CD, CLCD_CL, label='Measured data')
 plt.xlabel('drag coefficient [-]')
 plt.ylabel('lift coefficient [-]')
 plt.title('LIFT - DRAG')
@@ -403,8 +401,9 @@ cdlist = np.linspace(t2root,CLCD_CD[2],100)
 CDCL_rest = np.polyfit(CLCD_CD[2:7],CLCD_CL[2:7],3)
 t2_rest =np.poly1d(CDCL_rest)
 cdlist_rest = np.linspace(CLCD_CD[2],CLCD_CD[6],100)
-plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-")
+plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-", label='Regression line')
 plt.plot(cdlist,t2(cdlist),"r-")
+plt.legend(loc ="upper left")
 plt.show()
 
 print("CD0=", t2root)
@@ -414,9 +413,7 @@ print("CD0=", t2root)
 Cl2_mat1_list=[]
 
 for i in range(0, len(Cl_mat1_list)):
-
     Cl2=(float(Cl_mat1_list[i]))**2
-
     Cl2_mat1_list.append(Cl2)
 
 #ROOT INSERTED
@@ -430,24 +427,31 @@ CL2CD_CL2.insert(0,CL2CD_CL0)
 CL2CD_CD.insert(0,rootCL2CD0)
 
 plt.figure(4)
-plt.scatter(CL2CD_CL2, CL2CD_CD)
+plt.scatter(CL2CD_CL2, CL2CD_CD, label='Measured data')
 plt.xlabel('lift coefficient^2 [-]')
 plt.ylabel('drag coefficient [-]')
 plt.title('LIFT^2 - DRAG')
 plt.grid()
-plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
+plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-", label='Regression line')
+plt.legend(loc ="upper left")
 plt.show()
-print('CL^2/CD line gradient =',t3[1])
 
+print('CL^2/CD line gradient =',t3[1])
 CL2CDGRAD = t3[1]
 
-
 #%% Oswald efficiency factor
-
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
+
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
 
+CD0 = t2root 
+CLVAL = np.linspace(0,1,100)
+CDVAL = CD0 + (CLVAL**2)/(math.pi*e*A)
+plt.figure(3)
+plt.plot(CDVAL,CLVAL,'g', label='CD standard formula')
+plt.legend(loc ="upper left")
+plt.show()
 #%% Code for center gravity shit
 
 x3R1=x3          #m
