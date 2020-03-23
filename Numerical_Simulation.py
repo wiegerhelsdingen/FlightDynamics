@@ -9,12 +9,13 @@ import math
 import control as ctrl
 import matplotlib.pyplot as plt
 import control as cntrl
+from stationarymeasurements1 import *
 
 
-def numres(hp0,V0,alpha0,th0):
+def numres(hp0,V0,alpha0,th0,fuel):
     # Aircraft mass
-    m      =      1000       # mass [kg]
-
+    m      =      W_empty + bf_kg + np.sum(masspas) - fuel    # mass [kg]
+    print('mass',W_empty,bf_kg,np.sum(masspas),fuel,m)
     # aerodynamic properties
     e      = 0.8         # Oswald factor [ ]
     CD0    = 0.04        # Zero lift drag coefficient [ ]

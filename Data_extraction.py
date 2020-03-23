@@ -61,7 +61,9 @@ import numpy as np
 
 
 
-datapath = "/home/wieger/Documents/FlightDynamics/FTISxprt-20200310_flight3.mat"
+# datapath = "/home/wieger/Documents/FlightDynamics/FTISxprt-20200310_flight3.mat"
+datapath = "/home/wieger/Downloads/matlab.mat"
+
 def recdata(datapath):
     data = loadmat(datapath)
     data = data['flightdata'][0][0]
@@ -74,7 +76,7 @@ def recdata(datapath):
     parameters.append([name, unit, seconds])
 
     #Parameters
-    for i in range(48):
+    for i in range(len(data)-1):
         value = data[i][0][0][0]
         name = data[i][0][0][2][0][0][0]
 

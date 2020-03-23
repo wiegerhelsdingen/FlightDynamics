@@ -19,22 +19,24 @@ dt = 0.1
 # spir = 55:01
 
 # Stationary parameters
-hp = parameters[38][2] * 0.3048
+hp = parameters[38][2] * 0.3048         #m
+FF1 = parameters[5][2] * 0.000125997881 #kg/s
+FF2 = parameters[5][2] * 0.000125997881 #kg/s
 #Symmetric parameters
-AoA = parameters[1][2]  * np.pi/180
-Vt  = parameters[43][2] * 0.514444444
-Vc  = parameters[42][2] * 0.514444444
-th  = parameters[23][2] * np.pi/180
-q   = parameters[28][2] * np.pi/180
+AoA = parameters[1][2]  * np.pi/180     #rad
+Vt  = parameters[43][2] * 0.514444444   #m/s
+Vc  = parameters[42][2] * 0.514444444   #m/s
+th  = parameters[23][2] * np.pi/180     #rad
+q   = parameters[28][2] * np.pi/180     #rad/s
 #Asymmetric parameters
-yaw     = parameters[24][2] * np.pi/180
-roll    = parameters[22][2] * np.pi/180
-rolldot = parameters[27][2] * np.pi/180
-yawdot  = parameters[29][2] * np.pi/180
+yaw     = parameters[24][2] * np.pi/180 #rad
+roll    = parameters[22][2] * np.pi/180 #rad
+rolldot = parameters[27][2] * np.pi/180 #rad/s
+yawdot  = parameters[29][2] * np.pi/180 #rad/s
 #Force parameters
-de = parameters[18][2] * np.pi/180
-dr = parameters[19][2] * np.pi/180
-da = parameters[17][2] * np.pi/180
+de = parameters[18][2] * np.pi/180      #rad
+dr = parameters[19][2] * np.pi/180      #rad
+da = parameters[17][2] * np.pi/180      #rad
 #Time interval of eigenmotions
 spmt0    = 43*60+47.5
 spm_t    = 10
@@ -69,6 +71,7 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     th0 = th[i_t0]
     V0 = Vt[i_t0]
     q0 = q[i_t0]
+    fuel = np.sum(FF1[(time<t0)]*dt) + np.sum(FF2[(time<t0)]*dt)
     # print(hp0,V0,alpha0,th0)
     #Experimental data
     #Experimental data input
@@ -84,7 +87,7 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     #force
     force = de[interval]
     #Numerical Model
-    num_solution = numres(hp0,V0,alpha0,th0)
+    num_solution = numres(hp0,V0,alpha0,th0,fuel)
     sys = num_solution[0]
     num_response = ctrl.forced_response(sys, time, force)
     num_eigenval = num_solution[1]
@@ -158,7 +161,7 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
 
     #Numerical rodel
     #Numerical response and eigenvalues
-    num_solution = numres(hp0,V0,alpha0,th0)
+    num_solution = numres(hp0,V0,alpha0,th0,m)
     sys = num_solution[2]
     num_response = ctrl.forced_response(sys, time, force)
     num_eigenval = num_solution[3]
