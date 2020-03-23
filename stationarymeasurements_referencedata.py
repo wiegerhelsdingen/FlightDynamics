@@ -51,10 +51,11 @@ thrust2_s =np.matrix([[1346.94, 1346.94],
                       [1318.04, 1318.04],
                       [1266.70, 1266.70],
                       [1211.88, 1211.88]])
-
+"""
 # paramters
 W_empty = 9165*0.453592 #kg
-blockfuel = 4100 #lbs
+blockfuel = 4050 #lbs
+"""
 masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 """
 #%%----------- REFERENCE DATA -------------------------
@@ -106,12 +107,12 @@ bf_kg = blockfuel*0.453592  #kg
 #mat1 
 h_mat1 = mat1[:,0]*0.3048           # m
 IAS_mat1 = mat1[:,1]*0.514444       # m/s
-TAT_mat1 = mat1[:,2]+273.15         #temperature
+TAT_mat1 = mat1[:,6]+273.15         #temperature
 FFL_mat1 = mat1[:,3]* (1/7936.64)   # kg/s
 FFR_mat1 = mat1[:,4]* (1/7936.64)   #kg/s
 WF_mat1 = mat1[:,5]* 0.453592       #kg
 WF_mat1_lbs = mat1[:,5]              #lbs needed for cg 
-AOA_mat1 = mat1[:,6]                #degree  
+AOA_mat1 = mat1[:,2]                #degree  
 
 #mat2
 h_mat2 = mat2[:,0]*0.3048           # m
@@ -144,8 +145,10 @@ Tleft = thrust[:,0]                  # N
 Tright = thrust[:,1]                 # N
 Tleft2 = thrust2[:,0]                # N
 Tright2 = thrust2[:,1]               # N
+"""
 Tleft2_s = thrust2_s[:,0]            # N
 Tright2_s = thrust2_s[:,1]           # N
+"""
 #constants 
 g0=9.81 #not needed for x cg calculation
 S=30.00  #m^2
@@ -255,8 +258,8 @@ WL1=masspas[3]
 WR1=masspas[4]
 WL2=masspas[5]
 WR2=masspas[6]
-WL3=masspas[7]
-WR3=masspas[8]
+WR3=masspas[7]
+WL3=masspas[8]
 WCO=masspas[2]
 # passenger distances from tip [m]
 x0=131*inc_m
@@ -302,7 +305,7 @@ for i in range(0,len(WF_mat1_lbs)):
     xcgRM1 = xcgs[2] 
     xcgRM.append(xcgRM1)
     WF_RM.append(WF)
-
+"""
 plt.figure(1)
 plt.scatter(xcgRM, WF_RM)
 plt.ylabel('WF [kg]')
@@ -328,7 +331,7 @@ plt.ylabel('FUELinwing [kg]')
 plt.xlabel('xcg_RM from tip [m]')
 plt.title('XCG_RM vs FUELinwing')
 plt.grid()
-
+"""
 # conclusion: slight discrepancy due to table E2: wing can never be totally empty!
 
 #%% Measurement set 1 
@@ -383,7 +386,7 @@ CLA_CL = Cl_mat1_list.copy()
 CLA_ALPHA = alpha.copy()
 CLA_ALPHA.insert(0,alphacl0)
 CLA_CL.insert(0,rootcl0)
-"""
+
 plt.figure(1)
 plt.scatter(CLA_ALPHA,CLA_CL)
 plt.xlabel('angle of attack [radians]')
@@ -393,9 +396,9 @@ plt.grid()
 plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-")
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
 plt.show()
-"""
-CLA_GRAD = z[0]
 
+CLA_GRAD = z[0]
+print("CLalpha = ",CLA_GRAD)
 #%% Cd-alpha curve
 """
 #SECOND ORDER
@@ -482,9 +485,9 @@ e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
 """
 #%% Code for center gravity shit
-"""
+
 x3R1=x3          #m
-x3R2=x0
+x3R2=134*inc_m
 WF1=WF_mat3[0]   #kg
 WF2=WF_mat3[1]   #kg
 
@@ -539,7 +542,7 @@ for i in range(0,len(AOA_mat2)):
 DE_A = np.polyfit(alpha2,De2, 1)
 u = np.poly1d(DE_A)
 de_da = u[1]
-"""
+"""""
 plt.figure(6)
 plt.scatter(alpha2,De2)
 plt.show()
@@ -547,7 +550,7 @@ plt.show()
 Cmalpha = - Cmdelta * de_da
 print('Cm alpha = ', Cmalpha)
 Cm0 = 0.0297 # obtained from appendix B
-
+"""
 #%% Cm elevator equal
 # C_N = C_L (Assummed to be equal)
 # 
