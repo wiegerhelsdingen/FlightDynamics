@@ -5,29 +5,28 @@ from math import *
 
 # xcg = 0.25 * c
 
+# # Stationary flight condition
+# hp0    =   	        # pressure altitude in the stationary flight condition [m]
+# V0     =            # true airspeed in the stationary flight condition [m/sec]
+# alpha0 =            # angle of attack in the stationary flight condition [rad]
+# th0    =            # pitch angle in the stationary flight condition [rad]
 
-hp0    =   	    0    # pressure altitude in the stationary flight condition [m]
-V0     =       88     # true airspeed in the stationary flight condition [m/sec]
-alpha0 =      0      # angle of attack in the stationary flight condition [rad]
-th0    =       0     # pitch angle in the stationary flight condition [rad]
 
-
-# Transformation of recorded Parameters
-T_x_alpha = np.array([[1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
-T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
-
+# # Transformation of recorded Parameters
+# T_x_alpha = np.array([[1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
+# T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
 
 # Aircraft mass
-m      =  6805.89788           # mass [kg], EOW + BLOCKFUEL(at takeoff?) + PASSENGERS
+m      = 9165      # mass [kg]
 
 # aerodynamic properties
-e      = 0.7764550889925007         # Oswald factor [ ]
-CD0    = 0.021969748034172783       # Zero lift drag coefficient [ ]
-CLa    = 4.684502932989611      # Slope of CL-alpha curve [ /rad]
+e      = 0.8         # Oswald factor [ ]
+CD0    = 0.04        # Zero lift drag coefficient [ ]
+CLa    = 5.084       # Slope of CL-alpha curve [ ]
 
 # Longitudinal stability
-Cma    = -0.58256477    # longitudinal stabilty [ ]
-Cmde   = -1.21166653     # elevator effectiveness [ ]
+Cma    = -0.5626     # longitudinal stabilty [ ]
+Cmde   = -1.1642     # elevator effectiveness [ ]
 
 # Aircraft geometry
 S      = 30.00	          # wing area [m^2]

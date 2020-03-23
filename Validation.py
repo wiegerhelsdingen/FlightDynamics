@@ -5,6 +5,7 @@ from Data_extraction import *
 import control as cntrl
 from Numerical_Simulation import *
 import control as cntrl
+from parameters import *
 
 #Recorded time
 time = parameters[0][2]
@@ -53,7 +54,9 @@ spir_t   = 100
 
 
 def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
+    #------------------------------------
     #Specific time interval for eigenmotion
+    #------------------------------------
     interval0 = (time > t0)
     interval1 = (time < (t0+t1))
     interval = interval0
@@ -64,17 +67,21 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
             interval[i] = True
     #Time
     i_t0 = int(np.where(time==t0)[0])
-    time = np.arange(0,t1-dt,dt)
-    #Stationary Parameters
-    hp0 = hp[i_t0]
-    alpha0 = AoA[i_t0]
-    th0 = th[i_t0]
-    V0 = Vt[i_t0]
-    q0 = q[i_t0]
-    fuel = np.sum(FF1[(time<t0)]*dt) + np.sum(FF2[(time<t0)]*dt)
-    # print(hp0,V0,alpha0,th0)
-    #Experimental data
-    #Experimental data input
+    time_eigen = np.arange(0,t1-dt,dt)
+    #------------------------------------
+    #Experimental Data
+    #------------------------------------
+    #Stationary flight Parameters
+    alpha0 = AoA[i_t0][0]
+    th0 = th[i_t0][0]
+    V0 = Vt[i_t0][0]
+    q0 = q[i_t0][0]
+    #force
+    force = de[interval]
+
+    #------------------------------------
+    #Experimental response
+    #------------------------------------
     AoA = AoA[interval]
     Vt = Vt[interval]
     Vc = Vc[interval]
@@ -82,44 +89,52 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     q = q[interval]
     #Experimental Data Period, half time and eigenvalues
     filter = (abs(th-th0) < 10E-4)
-    P = time[filter][1]
+    P = time_eigen[filter][1]
     # realeigen_exp =
-    #force
-    force = de[interval]
-    #Numerical Model
-    num_solution = numres(hp0,V0,alpha0,th0,fuel)
+
+    #------------------------------------
+    #Numerical response
+    #------------------------------------
+    #Flight Dependent parameters
+    m,rho,W,muc,mub,CL,CD,CX0,CZ0 = eigenmotion_parameters(time,t0)
+    #Numerical solution
+    num_solution = numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
     sys = num_solution[0]
-    num_response = ctrl.forced_response(sys, time, force)
+    #Response
+    num_response = ctrl.forced_response(sys, time_eigen, force)
+    #Eigenvalues
     num_eigenval = num_solution[1]
     print(num_eigenval)
     num_response_V = num_response[1][0] +V0 #transformation
     num_response_alpha = num_response[1][1] +alpha0 #transformation
     num_response_th = num_response[1][2] +th0 #transformation
     num_response_q = num_response[1][3] +q0 #transformation
-    # Plots
-    fig, axs = plt.subplots(2, 2, constrained_layout=True)
-    fig.suptitle(eigenmotion,fontsize=16)
-    axs[0][0].plot(time, th, lw = 2, c = 'red', label='theta recorded')
-    # axs[0][0].plot(time, num_response_th, lw = 2, c = 'blue', label='theta numerical')
-    axs[0][0].set_ylabel('pitch angle recorded [rad]')
-    axs[0][0].grid()
-    axs[0][1].plot(time, AoA, lw=2, c='red', label='Ao recorded')
-    # axs[0][1].plot(time, num_response_alpha, lw = 2, c = 'blue', label='$\alpha$ numerical')
-    axs[0][1].set_ylabel('AoA recorded [rad]')
-    axs[0][1].grid()
-    axs[1][0].plot(time, Vt, lw=3, c='red', label='True airspeed recorded')
-    # axs[1][0].plot(time, num_response_V, lw = 2, c = 'blue', label='True airspeed numerical')
-    axs[1][0].set_ylabel('True airspeed recorded [m/s]')
-    axs[1][0].grid()
-    axs[1][1].plot(time, q, lw=3, c='red', label='pitch rate recorded')
-    # axs[1][1].plot(time, num_response_q, lw = 2, c = 'blue', label='pitch rate numerical')
-    axs[1][1].set_ylabel('pitch rate recorded [rad/s]')
-    axs[1][1].grid()
-    plt.show()
+    # # Plots
+    # fig, axs = plt.subplots(2, 2, constrained_layout=True)
+    # fig.suptitle(eigenmotion,fontsize=16)
+    # axs[0][0].plot(time_eigen, th, lw = 2, c = 'red', label='theta recorded')
+    # # axs[0][0].plot(time_eigen, num_response_th, lw = 2, c = 'blue', label='theta numerical')
+    # axs[0][0].set_ylabel('pitch angle recorded [rad]')
+    # axs[0][0].grid()
+    # axs[0][1].plot(time_eigen, AoA, lw=2, c='red', label='Ao recorded')
+    # # axs[0][1].plot(time_eigen, num_response_alpha, lw = 2, c = 'blue', label='$\alpha$ numerical')
+    # axs[0][1].set_ylabel('AoA recorded [rad]')
+    # axs[0][1].grid()
+    # axs[1][0].plot(time_eigen, Vt, lw=3, c='red', label='True airspeed recorded')
+    # # axs[1][0].plot(time_eigen, num_response_V, lw = 2, c = 'blue', label='True airspeed numerical')
+    # axs[1][0].set_ylabel('True airspeed recorded [m/s]')
+    # axs[1][0].grid()
+    # axs[1][1].plot(time_eigen, q, lw=3, c='red', label='pitch rate recorded')
+    # # axs[1][1].plot(time_eigen, num_response_q, lw = 2, c = 'blue', label='pitch rate numerical')
+    # axs[1][1].set_ylabel('pitch rate recorded [rad/s]')
+    # axs[1][1].grid()
+    # plt.show()
     return num_response, num_eigenval
 
 def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
+    #------------------------------------
     #Specific time interval for eigenmotion
+    #------------------------------------
     interval0 = (time > t0)
     interval1 = (time < (t0+t1))
     interval = interval0
@@ -130,8 +145,11 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
             interval[i] = True
     #Time
     i_t0 = int(np.where(time==t0)[0])
-    time = np.arange(0,t1-dt,dt)
+    time_eigen = np.arange(0,t1-dt,dt)
 
+    #------------------------------------
+    #Experimental Data
+    #------------------------------------
     #Stationary parameters
     hp0 = hp[i_t0]
     alpha0 = AoA[i_t0]
@@ -141,9 +159,14 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     roll0 = roll[i_t0]
     rolldot0 = rolldot[i_t0]
     yawdot0 = yawdot[i_t0]
+    #Forces
+    force1 = force1[interval]
+    force2 = force2[interval]
+    force = np.array([force1, force2])
 
-    #Experimental Data
-    #Experimental Data input
+    #------------------------------------
+    #Experimental response
+    #------------------------------------
     yaw = yaw[interval]
     roll = roll[interval]
     rolldot = rolldot[interval]
@@ -151,44 +174,49 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     #Experimental Data Period, half time and eigenvalues
     if eigenmotion == 'aperiodic roll' or eigenmotion == 'spiral':
         filter = (yaw > (yaw0/np.exp(1)))
-        t_const = time[filter][-1]
+        t_const = time_eigen[filter][-1]
     # if eigenmotion == 'dutch roll 1' or eigenmotion == 'dutch roll 2':
 
-    #Forces
-    force1 = force1[interval]
-    force2 = force2[interval]
-    force = np.array([force1, force2])
 
-    #Numerical rodel
+    #------------------------------------
     #Numerical response and eigenvalues
-    num_solution = numres(hp0,V0,alpha0,th0,m)
+    #------------------------------------
+    #Flight dependent variables
+    m,rho,W,muc,mub,CL,CD,CX0,CZ0 = eigenmotion_parameters(time,t0)
+    #Numerical solution
+    num_solution = numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
     sys = num_solution[2]
-    num_response = ctrl.forced_response(sys, time, force)
+    #Response
+    num_response = ctrl.forced_response(sys, time_eigen, force)
+    #Eigenvalues
     num_eigenval = num_solution[3]
     print(num_eigenval)
     num_response_yaw = num_response[1][0] + yaw0
     num_response_roll = num_response[1][1] + roll0
     num_response_rolldot = num_response[1][2] + rolldot0
     numr_response_yawdot = num_response[1][3] + yawdot0
+
+    #------------------------------------
     # Plots
+    #------------------------------------
     # plt.subplot(411)
-    # plt.plot(time, yaw, lw = 2, c = 'red', label='$\beta$ recorded')
-    # plt.plot(time, num_response_yaw, lw = 2, c = 'blue', label='$beta$ numerical')
+    # plt.plot(time_eigen, yaw, lw = 2, c = 'red', label='$\beta$ recorded')
+    # plt.plot(time_eigen, num_response_yaw, lw = 2, c = 'blue', label='$beta$ numerical')
     # plt.ylabel('$\beta$ recorded [rad]')
     # plt.grid()
     # plt.subplot(412)
-    # plt.plot(time, roll, lw=3, c='red', label='$\phi$ recorded')
-    # plt.plot(time, num_response_roll, lw = 2, c = 'blue', label='$phi$ numerical')
+    # plt.plot(time_eigen, roll, lw=3, c='red', label='$\phi$ recorded')
+    # plt.plot(time_eigen, num_response_roll, lw = 2, c = 'blue', label='$phi$ numerical')
     # plt.ylabel('$\phi$ recorded [rad]')
     # plt.grid()
     # plt.subplot(413)
-    # plt.plot(time, rolldot, lw=3, c='red', label='roll rate recorded')
-    # plt.plot(time, num_response_rolldot, lw = 2, c = 'blue', label='roll rate numerical')
+    # plt.plot(time_eigen, rolldot, lw=3, c='red', label='roll rate recorded')
+    # plt.plot(time_eigen, num_response_rolldot, lw = 2, c = 'blue', label='roll rate numerical')
     # plt.ylabel('roll rate recorded [m/s]')
     # plt.grid()
     # plt.subplot(414)
-    # plt.plot(time, yawdot, lw=3, c='red', label='yaw rate recorded')
-    # plt.plot(time, numr_response_yawdot, lw = 2, c = 'blue', label='yaw rate numerical')
+    # plt.plot(time_eigen, yawdot, lw=3, c='red', label='yaw rate recorded')
+    # plt.plot(time_eigen, numr_response_yawdot, lw = 2, c = 'blue', label='yaw rate numerical')
     # plt.ylabel('yaw rate recorded [1/s]')
     # plt.grid()
     # plt.show()
