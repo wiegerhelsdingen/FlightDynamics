@@ -61,7 +61,7 @@ import numpy as np
 
 
 
-datapath = "/home/wieger/Documents/FlightDynamics/FTISxprt-20200310_flight3.mat"
+datapath = "FTISxprt-20200310_flight3.mat"
 # datapath = "/home/wieger/Downloads/matlab.mat"
 
 def recdata(datapath):
