@@ -2,22 +2,12 @@
 
 import numpy as np
 from math import *
-<<<<<<< HEAD
-=======
-from Validation import *
->>>>>>> refs/remotes/origin/master
+
 # xcg = 0.25 * c
 
-# # Stationary flight condition
-# hp0    =   	        # pressure altitude in the stationary flight condition [m]
-# V0     =            # true airspeed in the stationary flight condition [m/sec]
-# alpha0 =            # angle of attack in the stationary flight condition [rad]
-# th0    =            # pitch angle in the stationary flight condition [rad]
 
-<<<<<<< HEAD
-=======
 hp0    =   	    0    # pressure altitude in the stationary flight condition [m]
-V0     =       100     # true airspeed in the stationary flight condition [m/sec]
+V0     =       88     # true airspeed in the stationary flight condition [m/sec]
 alpha0 =      0      # angle of attack in the stationary flight condition [rad]
 th0    =       0     # pitch angle in the stationary flight condition [rad]
 
@@ -25,11 +15,7 @@ th0    =       0     # pitch angle in the stationary flight condition [rad]
 # Transformation of recorded Parameters
 T_x_alpha = np.array([[1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
 T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
->>>>>>> refs/remotes/origin/master
 
-# # Transformation of recorded Parameters
-# T_x_alpha = np.array([[1, 0, 0], [0, cos(alpha0), sin(alpha0)], [0, -sin(alpha0), cos(alpha0)]])
-# T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
 
 # Aircraft mass
 m      =  6805.89788           # mass [kg], EOW + BLOCKFUEL(at takeoff?) + PASSENGERS
