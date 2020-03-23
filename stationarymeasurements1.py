@@ -109,7 +109,7 @@ mf_s=0.048 #kg/sec, standard engine fuel flow per engine
 c= 2.0569 #m, average chord
 b= 15.911 #m, wing span
 A= b**2 / S
-
+u0 = 1.802*(10**-5)   # dynamic viscosity [kg/m-s]
 rho0=1.225   #kg/m^3 
 p0=101325    #N/m^2 = Pa
 T0=288.15    #K
@@ -171,7 +171,12 @@ def drag(Tp, AOA):
 def Vreduction(W, Ve):
     Vred = Ve * math.sqrt(Ws / W)  #Reduced airspeed
     return (Vred)
-
+def Dviscosity(T):
+    u = u0*((T/T0)**(3/2))*((T0+S)/(T+S))
+    return (u)
+def reynolds(rho,V,u):
+    Re = rho*V*c/u
+    return Re
 #%% OBTAIN FUEL MOMENT (FM) POLYNOMIAL FOR CG CALCULATIONS (NOTE: entire section is based on table E2 and is in lbs and inches)
 FM_MOMENTS = [298.16, 591.18,879.08,1165.42,1448.40,1732.53,2014.80,2298.84,2581.92,2866.30,3150.18,3434.52,3718.52,4003.23,4287.76,4572.24,
                4856.56,5141.16,5425.64,5709.90,5994.04,6278.47,6562.82,6846.96,7131.00,7415.33,7699.60,7984.34,8269.06,8554.05,8839.04,9124.80,
@@ -302,7 +307,8 @@ for i in range(0,len(Tleft)):
     Tprop=float(Tleft[i])+float(Tright[i])
     Tp.append(Tprop)
     
-
+machlist1 = []
+reynoldslist1 = []
 for i in range(0,len(IAS_mat1)):
     hp=float(h_mat1[i])
     ias=float(IAS_mat1[i])
@@ -315,6 +321,10 @@ for i in range(0,len(IAS_mat1)):
     T=temperature(TAT, M)
     rho=density(p, T)
     Vt=Vtrue(M, T)
+    u1 = Dviscosity(T)
+    Re1 = reynolds(rho,Vt,u1)
+    machlist1.append(M)
+    reynoldslist1.append(Re1)
     a1 = float(AOA_mat1[i])
     Tprop = float(Tp[i])
     D=drag(Tprop, a1)             
@@ -324,7 +334,10 @@ for i in range(0,len(IAS_mat1)):
     Cd = (2 * D) / (rho * (Vt **2) * S)
     Cl_mat1_list.append(Cl)
     Cd_mat1_list.append(Cd)
-   
+
+#Mach & Reynolds number range series 1
+print("Mach range series 1 =", min(machlist1),"to", max(machlist1))
+print("Reynolds range series 1= ", min(reynoldslist1),"to",max(reynoldslist1))
 #%% CL-alpha curve
 
 #FIRST ORDER
@@ -430,11 +443,11 @@ CL2CDGRAD = t3[1]
 
 
 #%% Oswald efficiency factor
-"""
+
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
-"""
+
 #%% Code for center gravity shit
 
 x3R1=x3          #m
@@ -516,6 +529,9 @@ Tp2_s=[]
 for i in range(0,len(Tleft2_s)):
     Tprop2_s=float(Tleft2_s[i])+float(Tright2_s[i])
     Tp2_s.append(Tprop2_s)
+machlist2 = []
+reynoldslist2 = []
+
 
 delta_redlist = []
 Vred2list = []
@@ -528,6 +544,7 @@ for i in range(0,len(IAS_mat2)):
     Vc2=cas2
     p2=pressure(hp2)
     M2=mach(Vc2,p2)
+    machlist2.append(M2)
     TAT2=float(TAT_mat2[i])
     T2=temperature(TAT2, M2)
     rho2=density(p2, T2)
@@ -546,6 +563,9 @@ for i in range(0,len(IAS_mat2)):
     Fe = float(Fe_mat2[i])
     Fst = Fe * (Ws/W2)
     Fstlist.append(float(Fst))
+    u2 = Dviscosity(T2)
+    Re2 = reynolds(rho2,Vt2,u2)
+    reynoldslist2.append(Re2)
 """
 #DONT USE THIS,  MUST ASK TAS
 delta_redlist = []
@@ -585,23 +605,24 @@ FeVeq =np.polyfit(Vred2list,Fstlist,2)
 Fveq = np.poly1d(FeVeq)
 vlist = np.linspace(min(Vred2list),max(Vred2list),100)
 plt.figure(7)
-plt.scatter(Vred2list, delta_redlist, label = 'Computed reduced elevator deflection')
+plt.scatter(Vred2list, delta_redlist)
 plt.grid()
 plt.xlabel('Reduced velocity [m/s]')
 plt.ylabel('Reduced elevator deflection [m]')
-plt.plot(vlist,dveq(vlist),"r-", label = '2nd Degree polynomial fit for reduced elevator deflection') 
+plt.plot(vlist,dveq(vlist),"r-")
 plt.gca().invert_yaxis()
-plt.legend(fontsize = 8)
-plt.title('Elevator trim curve reduced for airspeed and Thrust')
+plt.title('Reduced velocity [m/s] vs. Reduced elevator deflection [m]')
 plt.show()
 
 plt.figure(8)
-plt.scatter(Vred2list, Fstlist, label = 'Computed reduced elevator control force')
+plt.scatter(Vred2list, Fstlist)
 plt.xlabel('Reduced velocity [m/s]')
 plt.ylabel('Elevator force [N]')
 plt.gca().invert_yaxis()
-plt.plot(vlist,Fveq(vlist),"r-", label = '2nd degree polynomial fit for reduced control force')
-plt.legend(fontsize = 8)
-plt.title('Elevator control force curve reduced for weight')
+plt.plot(vlist,Fveq(vlist),"r-")
+plt.title('Reduced velocity [m/s] vs. Elevator force [N]')
 plt.grid()
 plt.show()
+
+print("Mach range series 2 =", min(machlist2),"to", max(machlist2))
+print("Reynolds range series 2 (Vt used)= ", min(reynoldslist2),"to",max(reynoldslist2))
