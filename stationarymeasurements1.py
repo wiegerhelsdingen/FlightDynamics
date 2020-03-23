@@ -43,7 +43,7 @@ thrust2 = np.matrix([[1990.94, 2286.60],
                      [1898.25, 2174.97]])
 
 #thrust computations from thrust.exe for second measurement series, in N
-# standardized
+# standardized -> left and right thrust must match!
 thrust2_s =np.matrix([[1346.94, 1346.94],
                       [1401.15, 1401.15],
                       [1460.50, 1460.50],
@@ -116,8 +116,8 @@ T0=288.15    #K
 R=287.05     #gas constant, [m^2 / K*sec^2]
 lamb=-0.0065 #lambda for ISA pressure calculations
 gamma=1.4    #ratio specific heats
-D_engine = 0.69    #radius engine [m] average of range given in report
-A_engine = math.pi*((D_engine/2)**2)     #area engine [m^2]
+R_engine = 0.69/2    #radius engine [m] average of range given in report
+A_engine = math.pi*(R_engine**2)     #area engine [m^2]
 Ws = 60500      #N, needed for  reduced airspeed & standardization
 #%% Calibration
 
@@ -247,7 +247,7 @@ def centerofgravity(x3R, WF):
     xcg_RM = ((payload_moment + ew_moment+ fuel_moment)/(W_payload + W_empty+ W_fuel))
     return xcg_BEM, xcg_ZFM, xcg_RM
 ### plot of xcg rm change due to wf
-"""
+
 xcgRM = []
 WF_RM = []
 for i in range(0,len(WF_mat1_lbs)):
@@ -257,8 +257,8 @@ for i in range(0,len(WF_mat1_lbs)):
     xcgRM1 = xcgs[2] 
     xcgRM.append(xcgRM1)
     WF_RM.append(WF)
-
-plt.figure
+"""
+plt.figure(9)
 plt.scatter(xcgRM, WF_RM)
 plt.ylabel('WF [kg]')
 plt.xlabel('xcg_RM from tip [m]')
@@ -276,7 +276,7 @@ for i in range(0,len(FM_WEIGHTS)):
     xcg1.append(xcgRM1)
     FUELinwing1.append(FUELinwing)
     
-plt.figure
+plt.figure(10)
 plt.scatter(xcg1, FUELinwing1)
 plt.scatter(xcgs[1], 0)
 plt.ylabel('FUELinwing [kg]')
@@ -338,7 +338,7 @@ CLA_CL = Cl_mat1_list.copy()
 CLA_ALPHA = alpha.copy()
 CLA_ALPHA.insert(0,alphacl0)
 CLA_CL.insert(0,rootcl0)
-"""
+
 plt.figure(1)
 plt.scatter(CLA_ALPHA,CLA_CL)
 plt.xlabel('angle of attack [radians]')
@@ -348,11 +348,11 @@ plt.grid()
 plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-")
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
 plt.show()
-"""
+
 CLA_GRAD = z[0]
 
 #%% Cd-alpha curve
-"""
+
 #SECOND ORDER
 plt.figure(2)
 plt.scatter(alpha,Cd_mat1_list)
@@ -365,7 +365,7 @@ tt=np.poly1d(zz)
 plt.plot(alphalist,tt(alphalist),"r-")
 plt.legend()
 plt.show()
-"""
+
 #%% Cl-Cd curve
 #(HIGHER ORDER) 
 #THE ROOT (CD0) IS FOUND BY FITTING A 4TH ORDER POLYNOMIAL 
@@ -377,7 +377,7 @@ CLCD_CL = Cl_mat1_list.copy()
 CLCD_CD = Cd_mat1_list.copy()
 CLCD_CL.insert(0,0)
 CLCD_CD.insert(0,t2root)
-"""
+
 plt.figure(3)
 plt.scatter(CLCD_CD, CLCD_CL)
 plt.xlabel('drag coefficient [-]')
@@ -393,7 +393,7 @@ cdlist_rest = np.linspace(CLCD_CD[2],CLCD_CD[6],100)
 plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-")
 plt.plot(cdlist,t2(cdlist),"r-")
 plt.show()
-"""
+
 print("CD0=", t2root)
 
 #%% Cl^2-Cd plot
@@ -415,7 +415,7 @@ CL2CD_CL2 = Cl2_mat1_list.copy()
 CL2CD_CD = Cd_mat1_list.copy()
 CL2CD_CL2.insert(0,CL2CD_CL0)
 CL2CD_CD.insert(0,rootCL2CD0)
-"""
+
 plt.figure(4)
 plt.scatter(CL2CD_CL2, CL2CD_CD)
 plt.xlabel('lift coefficient^2 [-]')
@@ -425,7 +425,7 @@ plt.grid()
 plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
 plt.show()
 print('CL^2/CD line gradient =',t3[1])
-"""
+
 CL2CDGRAD = t3[1]
 
 
@@ -500,7 +500,7 @@ plt.show()
 """
 Cmalpha = - Cmdelta * de_da
 print('Cm alpha = ', Cmalpha)
-Cm0 = 0.0699 # obtained from appendix B
+Cm0 = 0.0297 # obtained from appendix B
 
 #%% Cm elevator equal
 # C_N = C_L (Assummed to be equal)
@@ -517,7 +517,37 @@ for i in range(0,len(Tleft2_s)):
     Tprop2_s=float(Tleft2_s[i])+float(Tright2_s[i])
     Tp2_s.append(Tprop2_s)
 
-
+delta_redlist = []
+Vred2list = []
+Fstlist = []
+for i in range(0,len(IAS_mat2)):
+    hp2=float(h_mat2[i])
+    ias2=float(IAS_mat2[i])
+    W2=float(weight(WF_mat2[i]))
+    cas2=ias_cas(ias2)
+    Vc2=cas2
+    p2=pressure(hp2)
+    M2=mach(Vc2,p2)
+    TAT2=float(TAT_mat2[i])
+    T2=temperature(TAT2, M2)
+    rho2=density(p2, T2)
+    Vt2=Vtrue(M2, T2)
+    Veq2 = Vequivalent(rho2, Vt2)
+    Vred2 = Vreduction(W2, Veq2)
+    Tp22 = float(Tp2[i])
+    Tp22_s = float(Tp2_s[i])
+    T_c = (2*Tp22)/(rho0*(R_engine**2)*(Veq2**2))
+    T_cs = (2*Tp22_s)/(rho2*(R_engine**2)*(Vred2**2))
+    delta_eq_meas = float(DE_mat2[i])
+    delta_red = delta_eq_meas - (1/Cmdelta)*CM_TC*(T_cs-T_c)
+    delta_red = math.radians(delta_red)
+    delta_redlist.append(float(delta_red))
+    Vred2list.append(float(Vred2))
+    Fe = float(Fe_mat2[i])
+    Fst = Fe * (Ws/W2)
+    Fstlist.append(float(Fst))
+"""
+#DONT USE THIS,  MUST ASK TAS
 delta_redlist = []
 Vred2list = []
 Fstlist = []
@@ -539,15 +569,16 @@ for i in range(0,len(IAS_mat2)):
     Tp22_s = float(Tp2_s[i])
     T_c = (2*Tp22)/(rho0*A_engine*(Veq2**2))
     T_cs = (2*Tp22_s)/(rho2*A_engine*(Vred2**2))
-    delta_eq_meas = float(DE_mat2[i])
+    delta_eq_meas = -(1/Cmdelta)*(Cm0 + (Cmalpha/C_N)*(2*W2/(rho2*(Vred2**2)*S))+CM_TC*T_c)
     delta_red = delta_eq_meas - (1/Cmdelta)*CM_TC*(T_cs-T_c)
+    delta_red = math.radians(delta_red)
     delta_redlist.append(float(delta_red))
     Vred2list.append(float(Vred2))
     Fe = float(Fe_mat2[i])
     Fst = Fe * (Ws/W2)
     Fstlist.append(float(Fst))
-
-
+#DONT USE THIS,  MUST ASK TAS
+"""
 deltaveq = np.polyfit(Vred2list,delta_redlist,2)
 dveq = np.poly1d(deltaveq)
 FeVeq =np.polyfit(Vred2list,Fstlist,2)
