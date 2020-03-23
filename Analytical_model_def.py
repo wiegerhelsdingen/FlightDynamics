@@ -79,8 +79,8 @@ def short_period(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     B_spm = -2 * muc * (KY2 * CZa + Cmadot + Cmq)
     C_spm = CZa * Cmq - 2 * muc * Cma
 
-    lambda_c_spm1 = (-B_spm + 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm)
-    lambda_c_spm2 = (-B_spm - 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm)
+    lambda_c_spm1 = (-B_spm + 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
+    lambda_c_spm2 = (-B_spm - 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
     period_spm = 2*np.pi/abs(lambda_c_spm1.imag) * c/V0
     t_half_spm = np.log(0.5)/lambda_c_spm1.real * c/V0
     zeta_spm  = -lambda_c_spm1.real / np.sqrt((lambda_c_spm1.imag)**2+(lambda_c_spm1.real)**2)
@@ -108,8 +108,8 @@ def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     B_phug_1 = 2 * muc * (CXu * Cma - Cmu * CXa) + Cmq*(CZu * CXa - CXu * CZa)
     C_phug_1 = CZ0 * (Cmu * CZa - CZu * Cma)
 
-    lambda_c_phug1 = (-B_phug_1 + 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1)
-    lambda_c_phug2 = (-B_phug_1 - 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1)
+    lambda_c_phug1 = (-B_phug_1 + 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) *V0/c
+    lambda_c_phug2 = (-B_phug_1 - 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) *V0/c
 
     period_phug = 2*np.pi/abs(lambda_c_phug1.imag) * c/V0
     t_half_phug = np.log(0.5)/lambda_c_phug1.real * c/V0
@@ -132,7 +132,7 @@ def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
 ######### A-periodic roll motion #############
 def aperiodic_roll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
-    lambda_b_apr = Clp / (4 * mub * KX2)
+    lambda_b_apr = Clp / (4 * mub * KX2) * V0/b
     t_half = np.log(0.5) * b / (lambda_b_apr * V0)
     time_cst = -b / (lambda_b_apr * V0)
     return lambda_b_apr, t_half, time_cst
@@ -140,7 +140,7 @@ def aperiodic_roll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
 ######### Spiral motion #############
 def spiral(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
-    lambda_b_spir = (2 * CL * (Clb * Cnr - Cnb * Clr)) / ((Clp * (CYb * Cnr + 4 * mub * Cnb )) - Cnp * (CYb * Clr + 4 * mub * Clb))
+    lambda_b_spir = (2 * CL * (Clb * Cnr - Cnb * Clr)) / ((Clp * (CYb * Cnr + 4 * mub * Cnb )) - Cnp * (CYb * Clr + 4 * mub * Clb)) * V0/b
     t_half = -np.log(0.5) * b / (lambda_b_spir * V0)
     time_cst = -b / (lambda_b_spir * V0)
     return lambda_b_spir, t_half, time_cst
@@ -166,6 +166,6 @@ def dutchroll_2(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     B_dutch2 = 1/2 * Cnr
     C_dutch2 = -Cnb
 
-    lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
-    lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2)
+    lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2) * V0/b
+    lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2) * V0/b
     return lambda_b_dutch2_1, lambda_b_dutch2_2
