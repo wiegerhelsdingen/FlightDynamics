@@ -8,7 +8,7 @@ This is a temporary script file.
 import numpy as np
 from math import *
 import cmath as cmath
-from Cit_par import *
+from parameters import *
 
 # # A i r c r a f t & Atmospheric p r op e r t i e s
 # g = 9.81 #m/ s^2
