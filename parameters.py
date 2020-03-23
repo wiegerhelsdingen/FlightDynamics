@@ -5,7 +5,7 @@ import sys
 
 
 # ----------------------------------------------------------------------------
-#Flight independent variables
+#Flight independent parameters
 # ----------------------------------------------------------------------------
 # mass
 W_empty = 9165*0.453592 #kg
@@ -82,12 +82,11 @@ Cnda   =  -0.0120
 Cndr   =  -0.0939
 
 # ----------------------------------------------------------------------------
-#Flight dependent variables
+#Flight dependent parameters
 # ----------------------------------------------------------------------------
 
 time = parameters[0][2]
-time_hrs = time/3600.
-dt = 0.1
+
 # Eigenmotions times
 # spm = 43:46
 # phug = 44:37
@@ -115,21 +114,9 @@ spir_t   = 100
 hp = parameters[38][2] * 0.3048         #m
 FF1 = parameters[5][2] * 0.000125997881 #kg/s
 FF2 = parameters[5][2] * 0.000125997881 #kg/s
-#Symmetric parameters
 AoA = parameters[1][2]  * np.pi/180     #rad
 Vt  = parameters[43][2] * 0.514444444   #m/s
-Vc  = parameters[42][2] * 0.514444444   #m/s
 th  = parameters[23][2] * np.pi/180     #rad
-q   = parameters[28][2] * np.pi/180     #rad/s
-#Asymmetric parameters
-yaw     = parameters[24][2] * np.pi/180 #rad
-roll    = parameters[22][2] * np.pi/180 #rad
-rolldot = parameters[27][2] * np.pi/180 #rad/s
-yawdot  = parameters[29][2] * np.pi/180 #rad/s
-#Disturbance parameters
-de = parameters[18][2] * np.pi/180      #rad
-dr = parameters[19][2] * np.pi/180      #rad
-da = parameters[17][2] * np.pi/180      #rad
 
 def dependent_parameters(hp0,V0,alpha0,th0,fuel):
     m      =      W_empty + bf_kg + np.sum(masspas) - fuel    # mass [kg]
@@ -146,10 +133,10 @@ def dependent_parameters(hp0,V0,alpha0,th0,fuel):
     CD = CD0 + (CLa * alpha0) ** 2 / (np.pi * A * e) # Drag coefficient [ ]
     CX0    = W * np.sin(th0) / (0.5 * rho * V0 ** 2 * S)
     CZ0    = -W * np.cos(th0) / (0.5 * rho * V0 ** 2 * S)
-    print(hp0,V0,alpha0,th0,m,rho,CL,CD)
     return m,rho,muc,mub,CL,CD,CX0,CZ0
 
 def eigenmotion_parameters(time,t0):
+    dt = 0.1
     i_t0 = int(np.where(time==t0)[0])
     #Stationary flight Parameters
     hp0 = hp[i_t0][0]
@@ -159,9 +146,3 @@ def eigenmotion_parameters(time,t0):
     fuel = np.sum(FF1[(time<t0)]*dt) + np.sum(FF2[(time<t0)]*dt)
     m,rho,muc,mub,CL,CD,CX0,CZ0 = dependent_parameters(hp0,V0,alpha0,th0,fuel)
     return V0,m,rho,muc,mub,CL,CD,CX0,CZ0
-
-V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm = eigenmotion_parameters(time,spmt0)
-V0_phug,m_phug,rho_phug,muc_phug,mub_phug,CL_phug,CD_phug,CX0_phug,CZ0_phug = eigenmotion_parameters(time,phugt0)
-V0_apr,m_apr,rho_apr,muc_apr,mub_apr,CL_apr,CD_apr,CX0_apr,CZ0_apr = eigenmotion_parameters(time,aprt0)
-V0_spir,m_spir,rho_spir,muc_spir,mub_spir,CL_spir,CD_spir,CX0_spir,CZ0_spir = eigenmotion_parameters(time,spirt0)
-V0_dutch1,m_dutch1,rho_dutch1,muc_dutch1,mub_dutch1,CL_dutch1,CD_dutch1,CX0_dutch1,CZ0_dutch1 = eigenmotion_parameters(time,dutch1t0)

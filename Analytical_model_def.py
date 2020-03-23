@@ -99,7 +99,6 @@ def short_period(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
 ######### Phugoid motion #############
 def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
-    print(m)
     # A_phug = 2 * muc * (CZa * Cmq - 2 * muc * Cma)
     # B_phug = 2 * muc * (CXu * Cma - Cmu * CXa) + Cmq*(CZu * CXa - CXu * CZa)
     # C_phug = CZ0 * (Cmu * CZa - CZu * Cma)
@@ -145,7 +144,6 @@ def spiral(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     t_half = -np.log(0.5) * b / (lambda_b_spir * V0)
     time_cst = -b / (lambda_b_spir * V0)
     return lambda_b_spir, t_half, time_cst
-
 
 ######### Dutch roll motion  case 1 #############
 def dutchroll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):

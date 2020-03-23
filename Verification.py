@@ -59,4 +59,41 @@ print("omega_n:", omega_n_dutch)
 #-------------------------------------------------------------------------------------------------------------
 #Numerical model
 #-------------------------------------------------------------------------------------------------------------
-num_spm   = numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
+sys_s, num_sym_par, sys_a, num_asym_par = numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
+# print(num_sym_par)
+# print(num_asym_par)
+
+print("-----------------------")
+print('Symmetric flight:')
+print("-----------------------")
+print('Eigenvalue 1: ', num_sym_par[0][0])
+print('Period: ', num_sym_par[0][1])
+print('halftime: ', num_sym_par[0][2] )
+print('zeta: ', num_sym_par[0][3])
+print('omega: ', num_sym_par[0][4])
+print('')
+
+print('Eigenvalue 2: ', num_sym_par[1][0])
+print('Period: ', num_sym_par[1][1])
+print('halftime: ', num_sym_par[1][2] )
+print('zeta: ', num_sym_par[1][3])
+print('omega: ', num_sym_par[1][4])
+
+print("-----------------------")
+print('Asymmetric flight:')
+print("-----------------------")
+print('Eigenvalue 1: ', num_asym_par[0][0])
+print('Period: ', num_asym_par[0][1])
+print('halftime: ', num_asym_par[0][2] )
+print('zeta: ', num_asym_par[0][3])
+print('omega: ', num_asym_par[0][4])
+print('')
+
+print('Eigenvalue 2: ', num_asym_par[1][0])
+print('half time :', num_asym_par[1][1])
+print('time constant: ', num_asym_par[1][2])
+print('')
+
+print('Eigenvalue 3: ', num_asym_par[2][0])
+print('half time :', num_asym_par[2][1])
+print('time constant: ', num_asym_par[2][2])

@@ -41,16 +41,22 @@ da = parameters[17][2] * np.pi/180      #rad
 #Time interval of eigenmotions
 spmt0    = 43*60+47.5
 spm_t    = 10
+spm_time = np.arange(0,spm_t-dt,dt)
 phugt0   = 44*60+37
 phug_t   = 180
+phug_time= np.arange(0,phug_t-dt,dt)
 aprt0    = 48*60+21
 apr_t    = 100
+apr_time = np.arange(0,apr_t-dt,dt)
 dutch1t0 = 50*60+23
 dutch1_t  = 40
+dutch1_time = np.arange(0,dutch1_t-dt,dt)
 dutch2t0 = 51*60+30
 dutch2_t = 40
+dutch2_time = np.arange(0,dutch2_t-dt,dt)
 spirt0   = 55*60+1
 spir_t   = 100
+spir_time = np.arange(0,spir_t-dt,dt)
 
 
 def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
@@ -87,16 +93,12 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     Vc = Vc[interval]
     th = th[interval]
     q = q[interval]
-    #Experimental Data Period, half time and eigenvalues
-    filter = (abs(th-th0) < 10E-4)
-    P = time_eigen[filter][1]
-    # realeigen_exp =
 
     #------------------------------------
     #Numerical response
     #------------------------------------
     #Flight Dependent parameters
-    m,rho,W,muc,mub,CL,CD,CX0,CZ0 = eigenmotion_parameters(time,t0)
+    V0,m,rho,muc,mub,CL,CD,CX0,CZ0 = eigenmotion_parameters(time,t0)
     #Numerical solution
     num_solution = numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
     sys = num_solution[0]
@@ -105,10 +107,10 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     #Eigenvalues
     num_eigenval = num_solution[1]
     print(num_eigenval)
-    num_response_V = num_response[1][0] +V0 #transformation
-    num_response_alpha = num_response[1][1] +alpha0 #transformation
-    num_response_th = num_response[1][2] +th0 #transformation
-    num_response_q = num_response[1][3] +q0 #transformation
+    num_response_V = num_response[1][0] /V0 -V0 #transformation
+    num_response_alpha = num_response[1][1] + alpha0 #transformation
+    num_response_th = num_response[1][2] + th0 #transformation
+    num_response_q = num_response[1][3] *c/V0 +q0 #transformation
     # # Plots
     # fig, axs = plt.subplots(2, 2, constrained_layout=True)
     # fig.suptitle(eigenmotion,fontsize=16)
@@ -171,12 +173,6 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     roll = roll[interval]
     rolldot = rolldot[interval]
     yawdot = yawdot[interval]
-    #Experimental Data Period, half time and eigenvalues
-    if eigenmotion == 'aperiodic roll' or eigenmotion == 'spiral':
-        filter = (yaw > (yaw0/np.exp(1)))
-        t_const = time_eigen[filter][-1]
-    # if eigenmotion == 'dutch roll 1' or eigenmotion == 'dutch roll 2':
-
 
     #------------------------------------
     #Numerical response and eigenvalues
@@ -191,10 +187,10 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     #Eigenvalues
     num_eigenval = num_solution[3]
     print(num_eigenval)
-    num_response_yaw = num_response[1][0] + yaw0
-    num_response_roll = num_response[1][1] + roll0
-    num_response_rolldot = num_response[1][2] + rolldot0
-    numr_response_yawdot = num_response[1][3] + yawdot0
+    num_response_yaw = num_response[1][0]
+    num_response_roll = num_response[1][1]
+    num_response_rolldot = num_response[1][2] * b/(2*V0)
+    numr_response_yawdot = num_response[1][3] * b/(2*V0)
 
     #------------------------------------
     # Plots
