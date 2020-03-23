@@ -61,8 +61,8 @@ import numpy as np
 
 
 
-# datapath = "/home/wieger/Documents/FlightDynamics/FTISxprt-20200310_flight3.mat"
-datapath = "/home/wieger/Downloads/matlab.mat"
+datapath = "/home/wieger/Documents/FlightDynamics/FTISxprt-20200310_flight3.mat"
+# datapath = "/home/wieger/Downloads/matlab.mat"
 
 def recdata(datapath):
     data = loadmat(datapath)
@@ -85,8 +85,10 @@ def recdata(datapath):
             unit = unit[0]
         else:
             unit = "no unit"
-
+        # if not name == 'Deflection of the control column (Se or DCOC)':
         parameters.append([name, unit, value])
+
+        # print(i,name)
     return parameters
 
 parameters = recdata(datapath)

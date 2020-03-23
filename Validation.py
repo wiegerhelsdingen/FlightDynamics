@@ -5,6 +5,7 @@ from Data_extraction import *
 import control as cntrl
 from Numerical_Simulation import *
 import control as cntrl
+from parameters import *
 
 #Recorded time
 time = parameters[0][2]
@@ -65,14 +66,14 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     #Time
     i_t0 = int(np.where(time==t0)[0])
     time = np.arange(0,t1-dt,dt)
-    #Stationary Parameters
-    hp0 = hp[i_t0]
-    alpha0 = AoA[i_t0]
-    th0 = th[i_t0]
-    V0 = Vt[i_t0]
-    q0 = q[i_t0]
+    #Stationary flight Parameters
+    hp0 = hp[i_t0][0]
+    alpha0 = AoA[i_t0][0]
+    th0 = th[i_t0][0]
+    V0 = Vt[i_t0][0]
+    q0 = q[i_t0][0]
     fuel = np.sum(FF1[(time<t0)]*dt) + np.sum(FF2[(time<t0)]*dt)
-    # print(hp0,V0,alpha0,th0)
+
     #Experimental data
     #Experimental data input
     AoA = AoA[interval]
@@ -87,6 +88,8 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     #force
     force = de[interval]
     #Numerical Model
+    #parameters
+    m,rho,W,muc,mub,CL,CD,CX0,CZ0 = parameters(hp0,V0,alpha0,th0,fuel)
     num_solution = numres(hp0,V0,alpha0,th0,fuel)
     sys = num_solution[0]
     num_response = ctrl.forced_response(sys, time, force)
