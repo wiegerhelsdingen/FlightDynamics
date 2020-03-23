@@ -10,111 +10,62 @@ from math import *
 import cmath as cmath
 #from Cit_par import *
 
-hp0    =  2     	      # pressure altitude in the stationary flight condition [m]
-V0     =   100          # true airspeed in the stationary flight condition [m/sec]
-alpha0 =    2         # angle of attack in the stationary flight condition [rad]
-th0    =     2        # pitch angle in the stationary flight condition [rad]
-
-# Aircraft mass
-m      =   2000          # mass [kg]
-
-# aerodynamic properties
-e      =   0.75          # Oswald factor [ ]
-CD0    =   2          # Zero lift drag coefficient [ ]
-CLa    =   2          # Slope of CL-alpha curve [ ]
-
-# Longitudinal stability
-Cma    =   -0.56          # longitudinal stabilty [ ]
-Cmde   =  2         # elevator effectiveness [ ]
-
-# Aircraft geometry
-
-S      = 30.00	          # wing area [m^2]
-Sh     = 0.2 * S         # stabiliser area [m^2]
-Sh_S   = Sh / S	          # [ ]
-lh     = 0.71 * 5.968    # tail length [m]
-c      = 2.0569	          # mean aerodynamic cord [m]
-lh_c   = lh / c	          # [ ]
-b      = 15.911	          # wing span [m]
-bh     = 5.791	          # stabilser span [m]
-A      = b ** 2 / S      # wing aspect ratio [ ]
-Ah     = bh ** 2 / Sh    # stabilser aspect ratio [ ]
-Vh_V   = 1	          # [ ]
-ih     = -2 * np.pi / 180   # stabiliser angle of incidence [rad]
-
-# Constant values concerning atmosphere and gravity
-
-rho0   = 1.2250          # air density at sea level [kg/m^3]
-Lambda = -0.0065         # temperature gradient in ISA [K/m]
-Temp0  = 288.15          # temperature at sea level in ISA [K]
-R      = 287.05          # specific gas constant [m^2/sec^2K]
-g      = 9.81            # [m/sec^2] (gravity constant)
-
-# air density [kg/m^3]
-#rho    = rho0 ** ( ((1+(Lambda * hp0 / Temp0))), (-((g / (Lambda*R)) + 1)))
-rho =1.225
-W      = m * g            # [N]       (aircraft weight)
-
-# Constant values concerning aircraft inertia
-
-muc    = m / (rho * S * c)
-mub    = m / (rho * S * b)
-KX2    = 0.019**2
-KZ2    = 0.042**2
-KXZ    = 0.002
-KY2    = 1.25 * 1.114
-
-# Aerodynamic constants
-
-Cmac   = 0                      # Moment coefficient about the aerodynamic centre [ ]
-CNwa   = CLa                    # Wing normal force slope [ ]
-CNha   = 2 * np.pi * Ah / (Ah + 2) # Stabiliser normal force slope [ ]
-depsda = 4 / (A + 2)            # Downwash gradient [ ]
-
-# Lift and drag coefficient
-
-CL = 2 * W / (rho * V0 ** 2 * S)              # Lift coefficient [ ]
-CD = CD0 + (CLa * alpha0) ** 2 / (np.pi * A * e) # Drag coefficient [ ]
-
-# Stabiblity derivatives
-
-CX0    = W * np.sin(th0) / (0.5 * rho * V0 ** 2 * S)
-CXu    = -0.02792
-CXa    = +0.47966		# Positive! (has been erroneously negative since 1993)
-CXadot = +0.08330
-CXq    = -0.28170
-CXde   = -0.03728
-
-CZ0    = -W * np.cos(th0) / (0.5 * rho * V0 ** 2 * S)
-CZu    = -0.37616
-CZa    = -5.74340
-CZadot = -0.00350
-CZq    = -5.66290
-CZde   = -0.69612
-
-Cmu    = +0.06990
-Cmadot = +0.17800
-Cmq    = -8.79415
-
-CYb    = -0.7500
-CYbdot =  0
-CYp    = -0.0304
-CYr    = +0.8495
-CYda   = -0.0400
-CYdr   = +0.2300
-
-Clb    = -0.10260
-Clp    = -0.71085
-Clr    = +0.23760
-Clda   = -0.23088
-Cldr   = +0.03440
-
-Cnb    =  +0.1348
-Cnbdot =   0
-Cnp    =  -0.0602
-Cnr    =  -0.2061
-Cnda   =  -0.0120
-Cndr   =  -0.0939
+# A i r c r a f t & Atmospheric p r op e r t i e s
+g = 9.81 #m/ s^2
+m = 6100 #kg
+rho = 0.89 #kg /m^3
+S = 30 #m^2
+c = 2.0569 #m
+b = 15.911 #m
+K_yy = 1.3925**( 0.5 )
+KY2 = 1.3925
+K_xx = 0.019**( 1/ 2 )
+KX2 = 0.019
+K_zz = 0.042**( 1/ 2 )
+KZ2 = 0.042
+K_xz = 0.002
+muc = m / ( rho * S * c)
+mub = m / ( rho * S * b )
+V0 = 88 #m/ s
+theta = 4.5 #deg
+theta = theta *np.pi /180 #rad
+CL = 2*m*g / ( rho * V0 ** 2 * S )
+#Symmetric f l i g h t p r op e r t i e s
+CXu = -0.0279
+CXa = -0.4797
+CXadot = 0.0833
+CXq = -0.2817
+CX0 = m * g * np.sin(theta) / ( 0.5 *rho * V0 ** 2. * S )
+CXdelta = -0.0373
+CZ0 = - m * g * np.cos(theta) / ( 0.5 *rho * V0 ** 2. * S )
+CZa = -5.7434*1.15 #was −5.7437
+CZadot = -0.0035
+CZu = -0.37616*1.5 #was −0.37616
+CZq = -5.6629
+CZdelta = -0.6961
+Cmu = 0.0699
+Cma = -0.7317 #was −0.5626 −−> rece i ved value from s t a t . measurements
+Cmadot = 0.1780
+Cmq = -8.7941
+Cmdelta = -1.75631 #was −1.1642 −−> rece i ved value from s t a t . measurements
+#Asymmetric p r op e r t i e s
+CYb = -0.75
+CYbeta_dot = 0
+CYp = -0.0304
+CYr = 0.8495
+C_Y_delta_a = 0.04 #−0.04
+C_Y_delta_r = -0.23 # 0.23
+Clb = -0.1026
+Clp = -0.7108
+Clr = 0.2376
+C_l_delta_a = 0.2309 #−0.2309
+C_l_delta_r = -0.0344 #0.0344
+Cnb = 0.1348
+C_n_beta_dot = 0
+Cnp = 0.1502 #was −0.0602
+Cnr = -0.2061
+C_n_delta_a = 0.012 #−0.012
+C_n_delta_r = 0.0939 #−0.0939
 
 
 
@@ -160,8 +111,8 @@ def phugoid():
     B_phug_1 = 2 * muc * (CXu * Cma - Cmu * CXa) + Cmq*(CZu * CXa - CXu * CZa)
     C_phug_1 = CZ0 * (Cmu * CZa - CZu * Cma)
 
-    lambda_c_phug1 = (-B_phug_1 + cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) * V0/c
-    lambda_c_phug2 = (-B_phug_1 - cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) * V0/c
+    lambda_c_phug1 = (-B_phug_1 + 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) * V0/c
+    lambda_c_phug2 = (-B_phug_1 - 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) * V0/c
 
     period_phug = 2*np.pi/abs(lambda_c_phug1.imag) * c/V0
     t_half_phug = np.log(0.5)/lambda_c_phug1.imag * c/V0
