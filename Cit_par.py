@@ -17,7 +17,7 @@ from math import *
 # T_x_th = np.array([[1, 0, 0], [0, cos(th0), sin(th0)], [0, -sin(th0), cos(th0)]])
 
 # Aircraft mass
-m      =      1000       # mass [kg]
+m      = 9165      # mass [kg]
 
 # aerodynamic properties
 e      = 0.8         # Oswald factor [ ]

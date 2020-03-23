@@ -12,7 +12,7 @@ import control as cntrl
 from parameters import *
 
 
-def numres(eigenmotion,V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
+def numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
 
     #C1,2,3-matrices for symmetric case
     u_transform = 1/V0
@@ -97,8 +97,8 @@ def numres(eigenmotion,V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
     t_half_a1 = np.log(0.5)/abs(eigenvals_a[1])*b/V0
     zeta_a1 = -eigenvals_s[0]/np.sqrt((eigenvals_a[1])**2+(eigenvals_a[0])**2)
     omega_a1= np.sqrt((eigenvals_a[1])**2+(eigenvals_a[0])**2)*V0/b*np.sqrt(1-zeta_a1**2)
-    t_half_a2 = np.log(0.5)*b/(eigenvals_a[2]*V0)
-    t_cst_a2 = -b/(eigenvals_a[2]*V0)
+    t_half_a2 = np.log(0.5)*b/(abs(eigenvals_a[2])*V0)
+    t_cst_a2 = -b/(abs(eigenvals_a[2])*V0)
     t_half_a3 = np.log(0.5)*b/(eigenvals_a[3]*V0)
     t_cst_a3 = -b/(eigenvals_a[3]*V0)
     print('Asymmetric flight:')
@@ -111,7 +111,7 @@ def numres(eigenmotion,V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
 
     return sys_s, eigenvals_s, sys_a, eigenvals_a
 
-num_spm   = numres('spm',V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
+num_spm   = numres(V0_spm,m_spm,rho_spm,muc_spm,mub_spm,CL_spm,CD_spm,CX0_spm,CZ0_spm)
 # num_phug  = numres('phug',V0_phug,m_phug,rho_phug,muc_phug,mub_phug,CL_phug,CD_phug,CX0_phug,CZ0_phug)
 # num_apr   = numres('apr',V0_apr,m_apr,rho_apr,muc_apr,mub_apr,CL_apr,CD_apr,CX0_apr,CZ0_apr)
 # num_spir  = numres('spir',V0_spir,m_spir,rho_spir,muc_spir,mub_spir,CL_spir,CD_spir,CX0_spir,CZ0_spir)

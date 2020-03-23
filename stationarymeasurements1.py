@@ -43,7 +43,7 @@ thrust2 = np.matrix([[1990.94, 2286.60],
                      [1898.25, 2174.97]])
 
 #thrust computations from thrust.exe for second measurement series, in N
-# standardized
+# standardized -> left and right thrust must match!
 thrust2_s =np.matrix([[1346.94, 1346.94],
                       [1401.15, 1401.15],
                       [1460.50, 1460.50],
@@ -109,15 +109,15 @@ mf_s=0.048 #kg/sec, standard engine fuel flow per engine
 c= 2.0569 #m, average chord
 b= 15.911 #m, wing span
 A= b**2 / S
-
+u0 = 1.802*(10**-5)   # dynamic viscosity [kg/m-s]
 rho0=1.225   #kg/m^3 
 p0=101325    #N/m^2 = Pa
 T0=288.15    #K
 R=287.05     #gas constant, [m^2 / K*sec^2]
 lamb=-0.0065 #lambda for ISA pressure calculations
 gamma=1.4    #ratio specific heats
-D_engine = 0.69    #radius engine [m] average of range given in report
-A_engine = math.pi*((D_engine/2)**2)     #area engine [m^2]
+R_engine = 0.69/2    #radius engine [m] average of range given in report
+A_engine = math.pi*(R_engine**2)     #area engine [m^2]
 Ws = 60500      #N, needed for  reduced airspeed & standardization
 #%% Calibration
 
@@ -171,7 +171,12 @@ def drag(Tp, AOA):
 def Vreduction(W, Ve):
     Vred = Ve * math.sqrt(Ws / W)  #Reduced airspeed
     return (Vred)
-
+def Dviscosity(T):
+    u = u0*((T/T0)**(3/2))*((T0+S)/(T+S))
+    return (u)
+def reynolds(rho,V,u):
+    Re = rho*V*c/u
+    return Re
 #%% OBTAIN FUEL MOMENT (FM) POLYNOMIAL FOR CG CALCULATIONS (NOTE: entire section is based on table E2 and is in lbs and inches)
 FM_MOMENTS = [298.16, 591.18,879.08,1165.42,1448.40,1732.53,2014.80,2298.84,2581.92,2866.30,3150.18,3434.52,3718.52,4003.23,4287.76,4572.24,
                4856.56,5141.16,5425.64,5709.90,5994.04,6278.47,6562.82,6846.96,7131.00,7415.33,7699.60,7984.34,8269.06,8554.05,8839.04,9124.80,
@@ -247,7 +252,7 @@ def centerofgravity(x3R, WF):
     xcg_RM = ((payload_moment + ew_moment+ fuel_moment)/(W_payload + W_empty+ W_fuel))
     return xcg_BEM, xcg_ZFM, xcg_RM
 ### plot of xcg rm change due to wf
-"""
+
 xcgRM = []
 WF_RM = []
 for i in range(0,len(WF_mat1_lbs)):
@@ -257,8 +262,8 @@ for i in range(0,len(WF_mat1_lbs)):
     xcgRM1 = xcgs[2] 
     xcgRM.append(xcgRM1)
     WF_RM.append(WF)
-
-plt.figure
+"""
+plt.figure(9)
 plt.scatter(xcgRM, WF_RM)
 plt.ylabel('WF [kg]')
 plt.xlabel('xcg_RM from tip [m]')
@@ -276,7 +281,7 @@ for i in range(0,len(FM_WEIGHTS)):
     xcg1.append(xcgRM1)
     FUELinwing1.append(FUELinwing)
     
-plt.figure
+plt.figure(10)
 plt.scatter(xcg1, FUELinwing1)
 plt.scatter(xcgs[1], 0)
 plt.ylabel('FUELinwing [kg]')
@@ -302,7 +307,8 @@ for i in range(0,len(Tleft)):
     Tprop=float(Tleft[i])+float(Tright[i])
     Tp.append(Tprop)
     
-
+machlist1 = []
+reynoldslist1 = []
 for i in range(0,len(IAS_mat1)):
     hp=float(h_mat1[i])
     ias=float(IAS_mat1[i])
@@ -315,6 +321,10 @@ for i in range(0,len(IAS_mat1)):
     T=temperature(TAT, M)
     rho=density(p, T)
     Vt=Vtrue(M, T)
+    u1 = Dviscosity(T)
+    Re1 = reynolds(rho,Vt,u1)
+    machlist1.append(M)
+    reynoldslist1.append(Re1)
     a1 = float(AOA_mat1[i])
     Tprop = float(Tp[i])
     D=drag(Tprop, a1)             
@@ -324,9 +334,12 @@ for i in range(0,len(IAS_mat1)):
     Cd = (2 * D) / (rho * (Vt **2) * S)
     Cl_mat1_list.append(Cl)
     Cd_mat1_list.append(Cd)
-   
-#%% CL-alpha curve
 
+#Mach & Reynolds number range series 1
+print("Mach range series 1 =", min(machlist1),"to", max(machlist1))
+print("Reynolds range series 1= ", min(reynoldslist1),"to",max(reynoldslist1))
+
+#%% CL-alpha curve
 #FIRST ORDER
 #ROOT INSERTED
 z=np.polyfit(alpha,Cl_mat1_list,1)
@@ -338,34 +351,32 @@ CLA_CL = Cl_mat1_list.copy()
 CLA_ALPHA = alpha.copy()
 CLA_ALPHA.insert(0,alphacl0)
 CLA_CL.insert(0,rootcl0)
-"""
+
 plt.figure(1)
-plt.scatter(CLA_ALPHA,CLA_CL)
+plt.scatter(CLA_ALPHA,CLA_CL, label='Measured data')
 plt.xlabel('angle of attack [radians]')
 plt.ylabel('lift coefficient [-]')
-plt.legend()
 plt.grid()
-plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-")
+plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-", label='Regression line')
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
+plt.legend(loc ="upper left")
 plt.show()
-"""
 CLA_GRAD = z[0]
 
 #%% Cd-alpha curve
-"""
 #SECOND ORDER
 plt.figure(2)
-plt.scatter(alpha,Cd_mat1_list)
+plt.scatter(alpha,Cd_mat1_list, label='Measured data')
 plt.xlabel('angle of attack [degrees]')
 plt.ylabel('drag coefficient [-]')
 plt.title('DRAG - ALPHA')
 plt.grid()
 zz=np.polyfit(alpha,Cd_mat1_list,2)
 tt=np.poly1d(zz)    
-plt.plot(alphalist,tt(alphalist),"r-")
-plt.legend()
+plt.plot(alphalist,tt(alphalist),"r-", label='Regression line')
+plt.legend(loc ="upper left")
 plt.show()
-"""
+
 #%% Cl-Cd curve
 #(HIGHER ORDER) 
 #THE ROOT (CD0) IS FOUND BY FITTING A 4TH ORDER POLYNOMIAL 
@@ -377,9 +388,9 @@ CLCD_CL = Cl_mat1_list.copy()
 CLCD_CD = Cd_mat1_list.copy()
 CLCD_CL.insert(0,0)
 CLCD_CD.insert(0,t2root)
-"""
+
 plt.figure(3)
-plt.scatter(CLCD_CD, CLCD_CL)
+plt.scatter(CLCD_CD, CLCD_CL, label='Measured data')
 plt.xlabel('drag coefficient [-]')
 plt.ylabel('lift coefficient [-]')
 plt.title('LIFT - DRAG')
@@ -390,10 +401,11 @@ cdlist = np.linspace(t2root,CLCD_CD[2],100)
 CDCL_rest = np.polyfit(CLCD_CD[2:7],CLCD_CL[2:7],3)
 t2_rest =np.poly1d(CDCL_rest)
 cdlist_rest = np.linspace(CLCD_CD[2],CLCD_CD[6],100)
-plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-")
+plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-", label='Regression line')
 plt.plot(cdlist,t2(cdlist),"r-")
+plt.legend(loc ="upper left")
 plt.show()
-"""
+
 print("CD0=", t2root)
 
 #%% Cl^2-Cd plot
@@ -401,9 +413,7 @@ print("CD0=", t2root)
 Cl2_mat1_list=[]
 
 for i in range(0, len(Cl_mat1_list)):
-
     Cl2=(float(Cl_mat1_list[i]))**2
-
     Cl2_mat1_list.append(Cl2)
 
 #ROOT INSERTED
@@ -415,26 +425,33 @@ CL2CD_CL2 = Cl2_mat1_list.copy()
 CL2CD_CD = Cd_mat1_list.copy()
 CL2CD_CL2.insert(0,CL2CD_CL0)
 CL2CD_CD.insert(0,rootCL2CD0)
-"""
+
 plt.figure(4)
-plt.scatter(CL2CD_CL2, CL2CD_CD)
+plt.scatter(CL2CD_CL2, CL2CD_CD, label='Measured data')
 plt.xlabel('lift coefficient^2 [-]')
 plt.ylabel('drag coefficient [-]')
 plt.title('LIFT^2 - DRAG')
 plt.grid()
-plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
+plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-", label='Regression line')
+plt.legend(loc ="upper left")
 plt.show()
+
 print('CL^2/CD line gradient =',t3[1])
-"""
 CL2CDGRAD = t3[1]
 
-
 #%% Oswald efficiency factor
-"""
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
+
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
-"""
+
+CD0 = t2root 
+CLVAL = np.linspace(0,1,100)
+CDVAL = CD0 + (CLVAL**2)/(math.pi*e*A)
+plt.figure(3)
+plt.plot(CDVAL,CLVAL,'g', label='CD standard formula')
+plt.legend(loc ="upper left")
+plt.show()
 #%% Code for center gravity shit
 
 x3R1=x3          #m
@@ -500,7 +517,7 @@ plt.show()
 """
 Cmalpha = - Cmdelta * de_da
 print('Cm alpha = ', Cmalpha)
-Cm0 = 0.0699 # obtained from appendix B
+Cm0 = 0.0297 # obtained from appendix B
 
 #%% Cm elevator equal
 # C_N = C_L (Assummed to be equal)
@@ -516,8 +533,45 @@ Tp2_s=[]
 for i in range(0,len(Tleft2_s)):
     Tprop2_s=float(Tleft2_s[i])+float(Tright2_s[i])
     Tp2_s.append(Tprop2_s)
+machlist2 = []
+reynoldslist2 = []
 
 
+delta_redlist = []
+Vred2list = []
+Fstlist = []
+for i in range(0,len(IAS_mat2)):
+    hp2=float(h_mat2[i])
+    ias2=float(IAS_mat2[i])
+    W2=float(weight(WF_mat2[i]))
+    cas2=ias_cas(ias2)
+    Vc2=cas2
+    p2=pressure(hp2)
+    M2=mach(Vc2,p2)
+    machlist2.append(M2)
+    TAT2=float(TAT_mat2[i])
+    T2=temperature(TAT2, M2)
+    rho2=density(p2, T2)
+    Vt2=Vtrue(M2, T2)
+    Veq2 = Vequivalent(rho2, Vt2)
+    Vred2 = Vreduction(W2, Veq2)
+    Tp22 = float(Tp2[i])
+    Tp22_s = float(Tp2_s[i])
+    T_c = (2*Tp22)/(rho0*(R_engine**2)*(Veq2**2))
+    T_cs = (2*Tp22_s)/(rho2*(R_engine**2)*(Vred2**2))
+    delta_eq_meas = float(DE_mat2[i])
+    delta_red = delta_eq_meas - (1/Cmdelta)*CM_TC*(T_cs-T_c)
+    delta_red = math.radians(delta_red)
+    delta_redlist.append(float(delta_red))
+    Vred2list.append(float(Vred2))
+    Fe = float(Fe_mat2[i])
+    Fst = Fe * (Ws/W2)
+    Fstlist.append(float(Fst))
+    u2 = Dviscosity(T2)
+    Re2 = reynolds(rho2,Vt2,u2)
+    reynoldslist2.append(Re2)
+"""
+#DONT USE THIS,  MUST ASK TAS
 delta_redlist = []
 Vred2list = []
 Fstlist = []
@@ -539,36 +593,42 @@ for i in range(0,len(IAS_mat2)):
     Tp22_s = float(Tp2_s[i])
     T_c = (2*Tp22)/(rho0*A_engine*(Veq2**2))
     T_cs = (2*Tp22_s)/(rho2*A_engine*(Vred2**2))
-    delta_eq_meas = float(DE_mat2[i])
+    delta_eq_meas = -(1/Cmdelta)*(Cm0 + (Cmalpha/C_N)*(2*W2/(rho2*(Vred2**2)*S))+CM_TC*T_c)
     delta_red = delta_eq_meas - (1/Cmdelta)*CM_TC*(T_cs-T_c)
+    delta_red = math.radians(delta_red)
     delta_redlist.append(float(delta_red))
     Vred2list.append(float(Vred2))
     Fe = float(Fe_mat2[i])
     Fst = Fe * (Ws/W2)
     Fstlist.append(float(Fst))
-
-
+#DONT USE THIS,  MUST ASK TAS
+"""
 deltaveq = np.polyfit(Vred2list,delta_redlist,2)
 dveq = np.poly1d(deltaveq)
 FeVeq =np.polyfit(Vred2list,Fstlist,2)
 Fveq = np.poly1d(FeVeq)
 vlist = np.linspace(min(Vred2list),max(Vred2list),100)
 plt.figure(7)
-plt.scatter(Vred2list, delta_redlist)
+plt.scatter(Vred2list, delta_redlist, label = 'Measured data')
 plt.grid()
 plt.xlabel('Reduced velocity [m/s]')
 plt.ylabel('Reduced elevator deflection [m]')
-plt.plot(vlist,dveq(vlist),"r-")
+plt.plot(vlist,dveq(vlist),"r-",label = 'Regression line')
 plt.gca().invert_yaxis()
 plt.title('Reduced velocity [m/s] vs. Reduced elevator deflection [m]')
+plt.legend(loc = 'upper right')
 plt.show()
 
 plt.figure(8)
-plt.scatter(Vred2list, Fstlist)
+plt.scatter(Vred2list, Fstlist, label = 'Measured data')
 plt.xlabel('Reduced velocity [m/s]')
 plt.ylabel('Elevator force [N]')
 plt.gca().invert_yaxis()
-plt.plot(vlist,Fveq(vlist),"r-")
+plt.plot(vlist,Fveq(vlist),"r-",label = 'Regression line')
 plt.title('Reduced velocity [m/s] vs. Elevator force [N]')
 plt.grid()
+plt.legend(loc = 'upper right')
 plt.show()
+
+print("Mach range series 2 =", min(machlist2),"to", max(machlist2))
+print("Reynolds range series 2 (Vt used)= ", min(reynoldslist2),"to",max(reynoldslist2))
