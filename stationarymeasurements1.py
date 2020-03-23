@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Mar 17 17:47:47 2020
-
-@author: tomvancranenburgh, reinier vos
-"""
 
 import numpy as np
 import scipy.io as sc
@@ -30,13 +24,33 @@ mat2 = np.matrix([[7120,162,5.5,-0.2,2.6,0,472,513,580,8.5],
 mat3 = np.matrix([[7240,165,5.2,0,2.8,0,471,511,735,8.0],
                     [7290,167,5.2,-0.7,2.8,-17,469,	511,773,8.2]])
 
-#thrust computations from thrust.exe, in N?
+#thrust computations from thrust.exe for first measurement series, in N
 thrust = np.matrix([[3349.31, 3756.94],
                     [2821.05, 3133.59],
                     [2384.87, 2699.04],
                     [1876.38, 2208],
                     [1858.28, 2111.42],
                     [2104.39, 2495.74]])
+
+#thrust computations from thrust.exe for second measurement series, in N
+# non standardized
+thrust2 = np.matrix([[1990.94, 2286.60],
+                     [2005.42, 2306.69],
+                     [2053.98, 2337.53],
+                     [2073.09, 2358.38],
+                     [1945.13, 2237.69],
+                     [1917.62, 2198.03],
+                     [1898.25, 2174.97]])
+
+#thrust computations from thrust.exe for second measurement series, in N
+# standardized
+thrust2_s =np.matrix([[1346.94, 1346.94],
+                      [1401.15, 1401.15],
+                      [1460.50, 1460.50],
+                      [1514.92, 1514.92],
+                      [1318.04, 1318.04],
+                      [1266.70, 1266.70],
+                      [1211.88, 1211.88]])
 
 # paramters
 W_empty = 9165*0.453592 #kg
@@ -58,7 +72,7 @@ AOA_mat1 = mat1[:,6]                #degree
 #mat2
 h_mat2 = mat2[:,0]*0.3048           # m
 IAS_mat2 = mat2[:,1]*0.514444       # m/s
-TAT_mat2 = mat2[:,2]+273.15         #KELVIN
+TAT_mat2 = mat2[:,9]+273.15         #KELVIN
 DE_mat2 = mat2[:,3]                 #degrees
 DETR_mat2 = mat2[:,4]               #degrees
 Fe_mat2 = mat2[:,5]                 #N
@@ -66,12 +80,12 @@ FFL_mat2 = mat2[:,6]* (1/7936.64)   # kg/s
 FFR_mat2 = mat2[:,7]* (1/7936.64)   #kg/s
 WF_mat2 = mat2[:,8]* 0.453592       #kg
 WF_mat2_lbs = mat2[:,8]              #lbs needed for cg 
-AOA_mat2 = mat2[:,9]                #degrees 
+AOA_mat2 = mat2[:,2]                #degrees 
 
 #mat3
 h_mat3 = mat3[:,0]*0.3048           # m
 IAS_mat3 = mat3[:,1]*0.514444       # m/s
-TAT_mat3 = mat3[:,2] +273.15        #KELVIN
+TAT_mat3 = mat3[:,9] +273.15        #KELVIN
 DE_mat3 = mat3[:,3]                 #degrees
 DETR_mat3 = mat3[:,4]               #degrees
 Fe_mat3 = mat3[:,5]                 #N
@@ -79,12 +93,15 @@ FFL_mat3 = mat3[:,6]* (1/7936.64)   # kg/s
 FFR_mat3 = mat3[:,7]* (1/7936.64)   #kg/s
 WF_mat3 = mat3[:,8]* 0.453592       #kg
 WF_mat3_lbs = mat3[:,8]             #lbs needed for cg 
-AOA_mat3 = mat3[:,9]                #DEGREE  
+AOA_mat3 = mat3[:,2]                #DEGREE  
 
 #thrust
 Tleft = thrust[:,0]                  # N
 Tright = thrust[:,1]                 # N
-
+Tleft2 = thrust2[:,0]                # N
+Tright2 = thrust2[:,1]               # N
+Tleft2_s = thrust2_s[:,0]            # N
+Tright2_s = thrust2_s[:,1]           # N
 #constants 
 g0=9.81 #not needed for x cg calculation
 S=30.00  #m^2
@@ -99,13 +116,14 @@ T0=288.15    #K
 R=287.05     #gas constant, [m^2 / K*sec^2]
 lamb=-0.0065 #lambda for ISA pressure calculations
 gamma=1.4    #ratio specific heats
-
-
+R_engine = 0.69    #radius engine [m] average of range given in report
+A_engine = math.pi*(R_engine**2)     #area engine [m^2]
+Ws = 60500      #N, needed for  reduced airspeed & standardization
 #%% Calibration
 
 #convert indicated air speed to calibrated air speed, appendix A
 def ias_cas(ias):
-    cas = ias - 2
+    cas = ias - 2*0.514444
     return cas
 
 #convert inidcated mach number to calibrated mach number WHERE DO WE USE THIS??
@@ -141,15 +159,18 @@ def Vtrue(M, T):
     return Vt
     
 #equivalent airspeed
-def Vequivalent(rho):
+def Vequivalent(rho, Vt):
     Ve=Vt * math.sqrt(rho/rho0)
     return Ve
 
 #drag curve
-#Tp =   #DEFINE Tp HERE
 def drag(Tp, AOA):
     D =  Tp * math.cos(math.radians(AOA))   #CHECK IF ALPHA IS AOA -> must be radians!
     return D
+# reduced velocity
+def Vreduction(W, Ve):
+    Vred = Ve * math.sqrt(Ws / W)  #Reduced airspeed
+    return (Vred)
 
 #%% OBTAIN FUEL MOMENT (FM) POLYNOMIAL FOR CG CALCULATIONS (NOTE: entire section is based on table E2 and is in lbs and inches)
 FM_MOMENTS = [298.16, 591.18,879.08,1165.42,1448.40,1732.53,2014.80,2298.84,2581.92,2866.30,3150.18,3434.52,3718.52,4003.23,4287.76,4572.24,
@@ -305,7 +326,7 @@ for i in range(0,len(IAS_mat1)):
     Cd_mat1_list.append(Cd)
    
 #%% CL-alpha curve
-"""
+
 #FIRST ORDER
 #ROOT INSERTED
 z=np.polyfit(alpha,Cl_mat1_list,1)
@@ -317,6 +338,7 @@ CLA_CL = Cl_mat1_list.copy()
 CLA_ALPHA = alpha.copy()
 CLA_ALPHA.insert(0,alphacl0)
 CLA_CL.insert(0,rootcl0)
+"""
 plt.figure(1)
 plt.scatter(CLA_ALPHA,CLA_CL)
 plt.xlabel('angle of attack [radians]')
@@ -326,9 +348,11 @@ plt.grid()
 plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-")
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
 plt.show()
+"""
 CLA_GRAD = z[0]
 
 #%% Cd-alpha curve
+"""
 #SECOND ORDER
 plt.figure(2)
 plt.scatter(alpha,Cd_mat1_list)
@@ -337,11 +361,11 @@ plt.ylabel('drag coefficient [-]')
 plt.title('DRAG - ALPHA')
 plt.grid()
 zz=np.polyfit(alpha,Cd_mat1_list,2)
-tt=np.poly1d(zz)     # change this to polynomial fit instead of linear google deze shit
-
+tt=np.poly1d(zz)    
 plt.plot(alphalist,tt(alphalist),"r-")
 plt.legend()
 plt.show()
+"""
 #%% Cl-Cd curve
 #(HIGHER ORDER) 
 #THE ROOT (CD0) IS FOUND BY FITTING A 4TH ORDER POLYNOMIAL 
@@ -353,6 +377,7 @@ CLCD_CL = Cl_mat1_list.copy()
 CLCD_CD = Cd_mat1_list.copy()
 CLCD_CL.insert(0,0)
 CLCD_CD.insert(0,t2root)
+"""
 plt.figure(3)
 plt.scatter(CLCD_CD, CLCD_CL)
 plt.xlabel('drag coefficient [-]')
@@ -368,7 +393,9 @@ cdlist_rest = np.linspace(CLCD_CD[2],CLCD_CD[6],100)
 plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-")
 plt.plot(cdlist,t2(cdlist),"r-")
 plt.show()
+"""
 print("CD0=", t2root)
+
 #%% Cl^2-Cd plot
 #FIRST ORDER
 Cl2_mat1_list=[]
@@ -388,6 +415,7 @@ CL2CD_CL2 = Cl2_mat1_list.copy()
 CL2CD_CD = Cd_mat1_list.copy()
 CL2CD_CL2.insert(0,CL2CD_CL0)
 CL2CD_CD.insert(0,rootCL2CD0)
+"""
 plt.figure(4)
 plt.scatter(CL2CD_CL2, CL2CD_CD)
 plt.xlabel('lift coefficient^2 [-]')
@@ -397,14 +425,16 @@ plt.grid()
 plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-")
 plt.show()
 print('CL^2/CD line gradient =',t3[1])
-CL2CDGRAD = t3[1]
 """
-#%% Oswald efficiency factor
+CL2CDGRAD = t3[1]
 
+
+#%% Oswald efficiency factor
+"""
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
-
+"""
 #%% Code for center gravity shit
 
 x3R1=x3          #m
@@ -451,54 +481,94 @@ delta=elevatoreffectiveness()[1]
 print(delta)
 print('elevator effectivenenss [-] = ', elevator_effectiveness)
 
-#%% Elevator trim curve, klopt niks van eigenlijk nog, maar heb wat in grote lijnen aan t denken wat er allemaal in moet komen
+#%% cm alpha
 
-'''
-Ws=60500
-Cm_0=
-Cn_alpha
-Cm_deltaf
-deltaf
-Cm_Tc=
+Cmdelta = elevator_effectiveness
+alpha2 = []
+De2 = []
+for i in range(0,len(AOA_mat2)):
+    alpha2.append(float(AOA_mat2[i]))
+    De2.append(float(DE_mat2[i]))
 
-'''
-
-#reduction airspeed
-W= 
-Ve= 
-def reductionairspeed(Tm, W, hp, ias):
-    Ve=ias_cas(ias)
-    Vr=Ve*sqrt(Ws/W) * #HERE ALSO CONVERT KTS TO CORRECT UNITS
-
-#reduction non-standard engine thrust
-
-
-
-#calculate everything for measurements 1
-for i in range(len(IAS_mat1)):
-    
-
-
-#thrust coefficients
-Tps =    #standard engine thrust, output of thrust.exe 
-D_e =     #engine inlet diameter
-
-Tcs=Tps / ( 0.5 * rho * V_e_reduced**2 * 2 * D_e**2 )
-
-
-#elevator trim
-# taken from model parameters
-Cl_alpha=5.084    #will be compared
-Cm0=0.0297
-Cm_alpha=-0.5626
-Cm_Tc=-0.0064
-
-CN_alpha=Cl_alpha #take this from the graph
-
-
-
-delta_e=- 1/(C_m_delta) * (CM0 + (Cm_alpha/CN_alpha) * (W/(0.5*rho*V_e_reduced**2*S) ) + Cm_deltaf*deltaf + Cm_Tc* Tc_s )
-
+DE_A = np.polyfit(alpha2,De2, 1)
+u = np.poly1d(DE_A)
+de_da = u[1]
 """
+plt.figure(6)
+plt.scatter(alpha2,De2)
+plt.show()
+"""
+Cmalpha = - Cmdelta * de_da
+print('Cm alpha = ', Cmalpha)
+Cm0 = 0.0699 # obtained from appendix B
+
+#%% Cm elevator equal
+# C_N = C_L (Assummed to be equal)
+# 
+C_N = CLA_GRAD
+CM_TC = -0.0064  #obtained from appendix B
+Tp2=[]
+for i in range(0,len(Tleft2)):
+    Tprop2=float(Tleft2[i])+float(Tright2[i])
+    Tp2.append(Tprop2)
+    
+Tp2_s=[]
+for i in range(0,len(Tleft2_s)):
+    Tprop2_s=float(Tleft2_s[i])+float(Tright2_s[i])
+    Tp2_s.append(Tprop2_s)
 
 
+delta_redlist = []
+Vred2list = []
+Fstlist = []
+for i in range(0,len(IAS_mat2)):
+    hp2=float(h_mat2[i])
+    ias2=float(IAS_mat2[i])
+    W2=float(weight(WF_mat2[i]))
+    cas2=ias_cas(ias2)
+    Vc2=cas2
+    p2=pressure(hp2)
+    M2=mach(Vc2,p2)
+    TAT2=float(TAT_mat2[i])
+    T2=temperature(TAT2, M2)
+    rho2=density(p2, T2)
+    Vt2=Vtrue(M2, T2)
+    Veq2 = Vequivalent(rho2, Vt2)
+    Vred2 = Vreduction(W2, Veq2)
+    Tp22 = float(Tp2[i])
+    Tp22_s = float(Tp2_s[i])
+    T_c = (2*Tp22)/(rho0*A_engine*(Veq2**2))
+    T_cs = (2*Tp22_s)/(rho2*A_engine*(Vred2**2))
+    delta_eq_meas = float(DE_mat2[i])
+    delta_red = delta_eq_meas - (1/Cmdelta)*CM_TC*(T_cs-T_c)
+    delta_redlist.append(float(delta_red))
+    Vred2list.append(float(Vred2))
+    Fe = float(Fe_mat2[i])
+    Fst = Fe * (Ws/W2)
+    Fstlist.append(float(Fst))
+
+
+deltaveq = np.polyfit(Vred2list,delta_redlist,2)
+dveq = np.poly1d(deltaveq)
+FeVeq =np.polyfit(Vred2list,Fstlist,2)
+Fveq = np.poly1d(FeVeq)
+vlist = np.linspace(min(Vred2list),max(Vred2list),100)
+plt.figure(7)
+plt.scatter(Vred2list, delta_redlist)
+plt.grid()
+plt.xlabel('Reduced velocity [m/s]')
+plt.ylabel('Reduced elevator deflection [m]')
+plt.plot(vlist,dveq(vlist),"r-")
+plt.gca().invert_yaxis()
+plt.title('Reduced velocity [m/s] vs. Reduced elevator deflection [m]')
+plt.show()
+
+plt.figure(8)
+plt.scatter(Vred2list, Fstlist)
+plt.xlabel('Reduced velocity [m/s]')
+plt.ylabel('Elevator force [N]')
+plt.gca().invert_yaxis()
+plt.plot(vlist,Fveq(vlist),"r-")
+plt.title('Reduced velocity [m/s] vs. Elevator force [N]')
+plt.grid()
+plt.show()
