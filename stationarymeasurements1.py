@@ -116,8 +116,8 @@ T0=288.15    #K
 R=287.05     #gas constant, [m^2 / K*sec^2]
 lamb=-0.0065 #lambda for ISA pressure calculations
 gamma=1.4    #ratio specific heats
-R_engine = 0.69    #radius engine [m] average of range given in report
-A_engine = math.pi*(R_engine**2)     #area engine [m^2]
+D_engine = 0.69    #radius engine [m] average of range given in report
+A_engine = math.pi*((D_engine/2)**2)     #area engine [m^2]
 Ws = 60500      #N, needed for  reduced airspeed & standardization
 #%% Calibration
 
