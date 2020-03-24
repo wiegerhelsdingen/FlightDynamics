@@ -81,7 +81,7 @@ mat3 = np.matrix([[5730,161,5.3,0.0,2.8,0.0,471,493,881,5.0],
                   [5790,161,5.3,-0.5,2.8,-30,468,490,910,5.0]])
 
 #payload
-masspas = np.array([95,92,74,66,61,75,78,86,68])    #kg
+masspas = np.array([95,92,74,66,61,75,78,68,86])    #kg
 
 #thrust computations from thrust.exe for first measurement series, in N
 thrust = np.matrix([[3643.31,3746.28],
@@ -250,7 +250,7 @@ ft_m=0.3048
 lbsin_kgm = 1/86.796166214519 # lbs inches to kg m
 
 #change everything so that unit change xcg only happens at the end
-masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
+masspas = np.array([95,92,74,66,61,75,78,86,68]) #kg
 #passenger weights [kg]
 WP1=masspas[0]
 WP2=masspas[1]
@@ -258,8 +258,8 @@ WL1=masspas[3]
 WR1=masspas[4]
 WL2=masspas[5]
 WR2=masspas[6]
-WR3=masspas[7]
-WL3=masspas[8]
+WL3=masspas[7]
+WR3=masspas[8]
 WCO=masspas[2]
 # passenger distances from tip [m]
 x0=131*inc_m
