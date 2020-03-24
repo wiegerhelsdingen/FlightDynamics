@@ -43,8 +43,8 @@ CNwa   = CLa                    # Wing normal force slope [ ]
 CNha   = 2 * np.pi * Ah / (Ah + 2) # Stabiliser normal force slope [ ]
 depsda = 4 / (A + 2)            # Downwash gradient [ ]
 
-CXu    = -0.02792
-CXa    = -0.47966		# Positive! (has been erroneously negative since 1993)
+CXu    = -0.09500
+CXa    = +0.47966		# Positive! (has been erroneously negative since 1993)
 CXadot = +0.08330
 CXq    = -0.28170
 CXde   = -0.03728
@@ -147,8 +147,8 @@ def eigenmotion_parameters(time,t0):
     m,rho,muc,mub,CL,CD,CX0,CZ0 = dependent_parameters(hp0,V0,alpha0,th0,fuel)
     return V0,m,rho,muc,mub,CL,CD,CX0,CZ0
 
-V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm = eigenmotion_parameters(time,spmt0)
-V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug = eigenmotion_parameters(time,phugt0)
-V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr = eigenmotion_parameters(time,aprt0)
-V0_spir, m_spir, rho_spir, muc_spir, mub_spir, CL_spir, CD_spir, CX0_spir, CZ0_spir = eigenmotion_parameters(time,spirt0)
-V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch = eigenmotion_parameters(time,dutch1t0)
+# V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm = eigenmotion_parameters(time,spmt0)
+# V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug = eigenmotion_parameters(time,phugt0)
+# V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr = eigenmotion_parameters(time,aprt0)
+# V0_spir, m_spir, rho_spir, muc_spir, mub_spir, CL_spir, CD_spir, CX0_spir, CZ0_spir = eigenmotion_parameters(time,spirt0)
+# V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch = eigenmotion_parameters(time,dutch1t0)
