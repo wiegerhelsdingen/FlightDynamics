@@ -8,7 +8,7 @@ This is a temporary script file.
 import numpy as np
 from math import *
 import cmath as cmath
-from parameters import *
+from parameters_def import *
 
 
 ######### Short period motion #############

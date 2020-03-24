@@ -9,7 +9,7 @@ import math
 import control as ctrl
 import matplotlib.pyplot as plt
 import control as cntrl
-from parameters import *
+from parameters_def import *
 
 
 def numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
