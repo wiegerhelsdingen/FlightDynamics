@@ -14,10 +14,10 @@ masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 # aerodynamic properties
 e      = 0.8         # Oswald factor [ ]
 CD0    = 0.04        # Zero lift drag coefficient [ ]
-CLa    = 4.68 #5.084       # Slope of CL-alpha curve [ ]
+CLa    = 5.084       # Slope of CL-alpha curve [ ]
 # Longitudinal stability
-Cma    = -0.58256477 #-0.5626     # longitudinal stabilty [ ]
-Cmde   = -1.21166653 #-1.1642     # elevator effectiveness [ ]
+Cma    = -0.5626     # longitudinal stabilty [ ]
+Cmde   = -1.1642     # elevator effectiveness [ ]
 # Aircraft geometry
 S      = 30.00	          # wing area [m^2]
 Sh     = 0.2 * S         # stabiliser area [m^2]
@@ -44,7 +44,7 @@ CNha   = 2 * np.pi * Ah / (Ah + 2) # Stabiliser normal force slope [ ]
 depsda = 4 / (A + 2)            # Downwash gradient [ ]
 
 CXu    = -0.02792
-CXa    = -0.47966		# Positive! (has been erroneously negative since 1993)
+CXa    = +0.47966		# Positive! (has been erroneously negative since 1993)
 CXadot = +0.08330
 CXq    = -0.28170
 CXde   = -0.03728
