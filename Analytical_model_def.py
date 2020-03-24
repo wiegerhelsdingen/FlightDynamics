@@ -81,8 +81,8 @@ def short_period(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
     lambda_c_spm1 = (-B_spm + 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
     lambda_c_spm2 = (-B_spm - 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
-    period_spm = 2*np.pi/abs(lambda_c_spm1.imag) * c/V0
-    t_half_spm = np.log(0.5)/lambda_c_spm1.real * c/V0
+    period_spm = 2*np.pi/abs(lambda_c_spm1.imag) #* c/V0
+    t_half_spm = np.log(0.5)/lambda_c_spm1.real #* c/V0
     zeta_spm  = -lambda_c_spm1.real / np.sqrt((lambda_c_spm1.imag)**2+(lambda_c_spm1.real)**2)
     omega_n_spm = np.sqrt((lambda_c_spm1.imag)**2+(lambda_c_spm1.real)**2) * V0/c * np.sqrt(1-zeta_spm**2)
 
@@ -175,7 +175,7 @@ print("Short period motion:")
 print(short_period(V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm))
 print()
 print("Phugoid: ")
-print(short_period(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug))
+print(phugoid(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug))
 print()
 print("A-periodic roll")
 print(aperiodic_roll(V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr))
