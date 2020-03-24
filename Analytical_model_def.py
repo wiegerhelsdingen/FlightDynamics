@@ -24,7 +24,7 @@ def short_period(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
     lambda_c_spm1 = (-B_spm + 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
     lambda_c_spm2 = (-B_spm - 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
-    period_spm = 2*np.pi/abs(lambda_c_spm1.imag) 
+    period_spm = 2*np.pi/abs(lambda_c_spm1.imag)
     t_half_spm = np.log(0.5)/lambda_c_spm1.real
     zeta_spm  = -lambda_c_spm1.real / np.sqrt((lambda_c_spm1.imag)**2+(lambda_c_spm1.real)**2)
     omega_n_spm = np.sqrt((lambda_c_spm1.imag)**2+(lambda_c_spm1.real)**2) * V0/c * np.sqrt(1-zeta_spm**2)
@@ -54,8 +54,8 @@ def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_c_phug1 = (-B_phug_1 + 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) *V0/c
     lambda_c_phug2 = (-B_phug_1 - 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) *V0/c
 
-    period_phug = 2*np.pi/abs(lambda_c_phug1.imag) 
-    t_half_phug = np.log(0.5)/lambda_c_phug1.real 
+    period_phug = 2*np.pi/abs(lambda_c_phug1.imag)
+    t_half_phug = np.log(0.5)/lambda_c_phug1.real
     zeta_phug  = -lambda_c_phug1.real / np.sqrt((lambda_c_phug1.imag)**2+(lambda_c_phug1.real)**2)
     omega_n_phug = np.sqrt((lambda_c_phug1.imag)**2+(lambda_c_phug1.real)**2) * V0/c * np.sqrt(1-zeta_phug**2)
 
@@ -76,16 +76,26 @@ def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 ######### A-periodic roll motion #############
 def aperiodic_roll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_apr = Clp / (4 * mub * KX2) * V0/b
+<<<<<<< HEAD
     t_half = np.log(0.5) / (lambda_b_apr )
     time_cst = -1 / (lambda_b_apr)
+=======
+    t_half = -np.log(0.5) / (lambda_b_apr)
+    time_cst = -1 / (lambda_b_apr )
+>>>>>>> 78539c8959c0730dd7d90054f793e245838e724b
     return lambda_b_apr, t_half, time_cst
 
 
 ######### Spiral motion #############
 def spiral(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_spir = (2 * CL * (Clb * Cnr - Cnb * Clr)) / ((Clp * (CYb * Cnr + 4 * mub * Cnb )) - Cnp * (CYb * Clr + 4 * mub * Clb)) * V0/b
+<<<<<<< HEAD
     t_half = -np.log(0.5) / (lambda_b_spir)
     time_cst = -1 / (lambda_b_spir)
+=======
+    t_half = -np.log(0.5)  / (lambda_b_spir)
+    time_cst = -1 / (lambda_b_spir )
+>>>>>>> 78539c8959c0730dd7d90054f793e245838e724b
     return lambda_b_spir, t_half, time_cst
 
 ######### Dutch roll motion  case 1 #############
@@ -96,8 +106,8 @@ def dutchroll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
     dutch_char = np.poly1d([A_dutch, B_dutch, C_dutch])
     lambda_b_dutch = np.roots(dutch_char) * V0/b
-    period_dutch = 2 * np.pi / abs(lambda_b_dutch[0].imag) 
-    t_half_dutch = np.log(0.5) / lambda_b_dutch[0].real 
+    period_dutch = 2 * np.pi / abs(lambda_b_dutch[0].imag)
+    t_half_dutch = np.log(0.5) / lambda_b_dutch[0].real
     zeta_dutch = -lambda_b_dutch[0].real / np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2)
     omega_n_dutch = np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2) * V0/b * np.sqrt(1-zeta_dutch**2)
     return lambda_b_dutch[0], lambda_b_dutch[1], period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch
@@ -112,13 +122,21 @@ def dutchroll_2(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2) * V0/b
     lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2) * V0/b
     return lambda_b_dutch2_1, lambda_b_dutch2_2
+<<<<<<< HEAD
 
+=======
+#
+>>>>>>> 78539c8959c0730dd7d90054f793e245838e724b
 # print()
 # print("Short period motion:")
 # print(short_period(V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm))
 # print()
 # print("Phugoid: ")
+<<<<<<< HEAD
 # print(phugoid(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug))
+=======
+# print(puhgoid(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug))
+>>>>>>> 78539c8959c0730dd7d90054f793e245838e724b
 # print()
 # print("A-periodic roll")
 # print(aperiodic_roll(V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr))
@@ -127,4 +145,8 @@ def dutchroll_2(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 # print(spiral(V0_spir, m_spir, rho_spir, muc_spir, mub_spir, CL_spir, CD_spir, CX0_spir, CZ0_spir))
 # print()
 # print("Dutch roll")
+<<<<<<< HEAD
 # print(dutchroll(V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch))
+=======
+# print(dutchroll(V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch))
+>>>>>>> 78539c8959c0730dd7d90054f793e245838e724b

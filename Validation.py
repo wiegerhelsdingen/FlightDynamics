@@ -111,26 +111,26 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     num_response_th = num_response[1][2] + th0 #transformation
     num_response_q = num_response[1][3] *V0/c + q0 #transformation
     # Plots
-    fig, axs = plt.subplots(2, 2, constrained_layout=True)
-    fig.suptitle(eigenmotion,fontsize=16)
-    axs[0][0].plot(time_eigen, th, lw = 1, c = 'red', label='ecorded')
-    axs[0][0].plot(time_eigen, num_response_th, lw = 1, c = 'blue', label='numerical')
-    axs[0][0].set_ylabel('pitch angle [rad]')
-    axs[0][0].grid()
-    axs[0][1].plot(time_eigen, AoA, lw=1, c='red', label='recorded')
-    axs[0][1].plot(time_eigen, num_response_alpha, lw = 1, c = 'blue', label='numerical')
-    axs[0][1].set_ylabel('AoA [rad]')
-    axs[0][1].grid()
-    axs[1][0].plot(time_eigen, Vt, lw=1, c='red', label='recorded')
-    axs[1][0].plot(time_eigen, num_response_V, lw = 1, c = 'blue', label='numerical')
-    axs[1][0].set_ylabel('True airspeed [m/s]')
-    axs[1][0].grid()
-    axs[1][1].plot(time_eigen, q, lw=1, c='red', label='recorded')
-    axs[1][1].plot(time_eigen, num_response_q, lw = 1, c = 'blue', label='numerical')
-    axs[1][1].set_ylabel('pitch rate [rad/s]')
-    axs[1][1].grid()
-    axs[0][1].legend(bbox_to_anchor=( -0.016 , 1 ),loc=3,fontsize='medium' )
-    plt.show()
+    # fig, axs = plt.subplots(2, 2, constrained_layout=True)
+    # fig.suptitle(eigenmotion,fontsize=16)
+    # axs[0][0].plot(time_eigen, th, lw = 1, c = 'orange', label='ecorded')
+    # axs[0][0].plot(time_eigen, num_response_th, lw = 1, c = 'deepskyblue', label='numerical')
+    # axs[0][0].set_ylabel('pitch angle [rad]')
+    # axs[0][0].grid()
+    # axs[0][1].plot(time_eigen, AoA, lw=1, c='orange', label='recorded')
+    # axs[0][1].plot(time_eigen, num_response_alpha, lw = 1, c = 'deepskyblue', label='numerical')
+    # axs[0][1].set_ylabel('AoA [rad]')
+    # axs[0][1].grid()
+    # axs[1][0].plot(time_eigen, Vt, lw=1, c='orange', label='recorded')
+    # axs[1][0].plot(time_eigen, num_response_V, lw = 1, c = 'deepskyblue', label='numerical')
+    # axs[1][0].set_ylabel('True airspeed [m/s]')
+    # axs[1][0].grid()
+    # axs[1][1].plot(time_eigen, q, lw=1, c='orange', label='recorded')
+    # axs[1][1].plot(time_eigen, num_response_q, lw = 1, c = 'deepskyblue', label='numerical')
+    # axs[1][1].set_ylabel('pitch rate [rad/s]')
+    # axs[1][1].grid()
+    # axs[0][1].legend(bbox_to_anchor=( -0.016 , 1 ),loc=3,fontsize='medium' )
+    # plt.show()
     return num_response, num_eigenval
 
 def asymplot(eigenmotion,time,t0,t1,roll,rolldot,yawdot,force1,force2):
@@ -184,10 +184,10 @@ def asymplot(eigenmotion,time,t0,t1,roll,rolldot,yawdot,force1,force2):
     num_response = ctrl.forced_response(sys, time_eigen, force)
     #Eigenvalues
     num_eigenval = num_solution[3]
-    num_response_yaw = -num_response[1][0]
-    num_response_roll = -num_response[1][1] + roll0
-    num_response_rolldot = -num_response[1][2] * (2*V0)/b + rolldot0
-    numr_response_yawdot = -num_response[1][3] * (2*V0)/b + yawdot0
+    num_response_yaw = num_response[1][0]
+    num_response_roll = num_response[1][1] + roll0
+    num_response_rolldot = num_response[1][2] * (2*V0)/b + rolldot0
+    numr_response_yawdot = num_response[1][3] * (2*V0)/b + yawdot0
 
     #------------------------------------
     # Plots
@@ -195,19 +195,19 @@ def asymplot(eigenmotion,time,t0,t1,roll,rolldot,yawdot,force1,force2):
     fig, axs = plt.subplots(2, 2, constrained_layout=True)
     fig.suptitle(eigenmotion,fontsize=16)
     # axs[0][0].plot(time_eigen, yaw, lw = 2, c = 'red', label='$\beta$ recorded')
-    axs[0][0].plot(time_eigen, num_response_yaw, lw = 1, c = 'blue', label=' numerical')
+    axs[0][0].plot(time_eigen, num_response_yaw, lw = 1, c = 'deepskyblue', label=' numerical')
     axs[0][0].set_ylabel('yaw angle [rad]')
     axs[0][0].grid()
-    axs[0][1].plot(time_eigen, roll, lw=1, c='red', label='recorded')
-    axs[0][1].plot(time_eigen, num_response_roll, lw = 1, c = 'blue', label='numerical')
+    axs[0][1].plot(time_eigen, roll, lw=1, c='orange', label='recorded')
+    axs[0][1].plot(time_eigen, num_response_roll, lw = 1, c = 'deepskyblue', label='numerical')
     axs[0][1].set_ylabel('$roll angle [rad]')
     axs[0][1].grid()
-    axs[1][0].plot(time_eigen, rolldot, lw=1, c='red', label=' recorded')
-    axs[1][0].plot(time_eigen, num_response_rolldot, lw = 1, c = 'blue', label=' numerical')
+    axs[1][0].plot(time_eigen, rolldot, lw=1, c='orange', label=' recorded')
+    axs[1][0].plot(time_eigen, num_response_rolldot, lw = 1, c = 'deepskyblue', label=' numerical')
     axs[1][0].set_ylabel('roll rate [m/s]')
     axs[1][0].grid()
-    axs[1][1].plot(time_eigen, yawdot, lw=1, c='red', label='recorded')
-    axs[1][1].plot(time_eigen, numr_response_yawdot, lw = 1, c = 'blue', label='numerical')
+    axs[1][1].plot(time_eigen, yawdot, lw=1, c='orange', label='recorded')
+    axs[1][1].plot(time_eigen, numr_response_yawdot, lw = 1, c = 'deepskyblue', label='numerical')
     axs[1][1].set_ylabel('yaw rate [1/s]')
     axs[1][1].grid()
     axs[0][1].legend(bbox_to_anchor=( -0.016 , 1 ),loc=3,fontsize='medium' )
