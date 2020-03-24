@@ -1,6 +1,6 @@
 import numpy as np
 from math import *
-from parameters import *
+from parameters_def import *
 from Analytical_model_def import *
 from Numerical_Simulation import *
 

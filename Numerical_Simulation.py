@@ -37,7 +37,7 @@ def numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
     A_s = np.matmul(-C_1s_inv, C_2s)
     B_s = np.matmul(-C_1s_inv, C_3s)
     C_s =           np.matrix([[1, 0, 0, 0],
-                    [0, 1, 0, 0],
+                    [0, 1, 0, 1],
                     [0, 0, 1, 0],
                     [0, 0, 0, 1]])
     D_s = np.matrix([[0] ,
@@ -49,13 +49,13 @@ def numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
     sys_s = ctrl.ss(A_s, B_s, C_s, D_s)
 
     eigenvals_s = np.linalg.eigvals(A_s)
-    period_s1 = 2*np.pi/eigenvals_s[0].imag*c/V0
-    t_half_s1 = np.log(0.5)/eigenvals_s[0].real*c/V0
+    period_s1 = 2*np.pi/eigenvals_s[0].imag
+    t_half_s1 = np.log(0.5)/eigenvals_s[0].real
     zeta_s1 = -eigenvals_s[0].real/np.sqrt((eigenvals_s[0].imag)**2+(eigenvals_s[0].real)**2)
     omega_s1= np.sqrt((eigenvals_s[0].imag)**2+(eigenvals_s[0].real)**2)*V0/c*np.sqrt(1-zeta_s1**2)
 
-    period_s2 = 2*np.pi/eigenvals_s[2].imag*c/V0
-    t_half_s2 = np.log(0.5)/eigenvals_s[2].real*c/V0
+    period_s2 = 2*np.pi/eigenvals_s[2].imag
+    t_half_s2 = np.log(0.5)/eigenvals_s[2].real
     zeta_s2 = -eigenvals_s[2].real/np.sqrt((eigenvals_s[2].imag)**2+(eigenvals_s[2].real)**2)
     omega_s2= np.sqrt((eigenvals_s[2].imag)**2+(eigenvals_s[2].real)**2)*V0/c*np.sqrt(1-zeta_s2**2)
 
@@ -95,8 +95,8 @@ def numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
 
     sys_a = ctrl.ss(A_a, B_a, C_a, D_a)
     eigenvals_a = np.linalg.eigvals(A_a)
-    period_a1 = 2*np.pi/eigenvals_a[1].imag*b/V0
-    t_half_a1 = np.log(0.5)/eigenvals_a[1].real*b/V0
+    period_a1 = 2*np.pi/eigenvals_a[1].imag
+    t_half_a1 = np.log(0.5)/eigenvals_a[1].real
     zeta_a1 = -eigenvals_s[1].real/np.sqrt((eigenvals_a[1].imag)**2+(eigenvals_a[1].real)**2)
     omega_a1= np.sqrt((eigenvals_a[1].imag)**2+(eigenvals_a[1].real)**2)*V0/b*np.sqrt(1-zeta_a1**2)
     t_half_a2 = np.log(0.5)*b/(eigenvals_a[2]*V0)
