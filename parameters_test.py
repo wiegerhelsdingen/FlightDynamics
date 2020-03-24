@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 24 18:55:57 2020
+Created on Tue Mar 24 21:57:16 2020
 
 @author: Xander
 """
@@ -17,14 +17,14 @@ import sys
 # mass
 W_empty = 9165*0.453592 #kg
 bf_kg = 4100*0.453592  #kg
-masspas = np.array([95, 92, 74, 66, 61, 75, 78, 86, 68]) #kg
+masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 # aerodynamic properties
-e      = 0.7801476741816539        # Oswald factor [ ]
-CD0    = 0.02301940091938726        # Zero lift drag coefficient [ ]
-CLa    = 4.811043026997966 #5.084       # Slope of CL-alpha curve [ ]
+e      = 0.8         # Oswald factor [ ]
+CD0    = 0.04        # Zero lift drag coefficient [ ]
+CLa    = 4.68 #5.084       # Slope of CL-alpha curve [ ]
 # Longitudinal stability
-Cma    = -0.55009481 #-0.5626     # longitudinal stabilty [ ]
-Cmde   = -1.14680232 #-1.1642     # elevator effectiveness [ ]
+Cma    = -0.58256477 #-0.5626     # longitudinal stabilty [ ]
+Cmde   = -1.21166653 #-1.1642     # elevator effectiveness [ ]
 # Aircraft geometry
 S      = 30.00	          # wing area [m^2]
 Sh     = 0.2 * S         # stabiliser area [m^2]
@@ -50,13 +50,13 @@ CNwa   = CLa                    # Wing normal force slope [ ]
 CNha   = 2 * np.pi * Ah / (Ah + 2) # Stabiliser normal force slope [ ]
 depsda = 4 / (A + 2)            # Downwash gradient [ ]
 
-CXu    = -0.09500
-CXa    = +0.47966		# Positive! (has been erroneously negative since 1993)
+CXu    = -0.128
+CXa    = +0.397		# Positive! (has been erroneously negative since 1993)
 CXadot = +0.08330
-CXq    = -0.28170
+CXq    = -0.202
 CXde   = -0.03728
 
-CZu    = -0.37616
+CZu    = -0.969
 CZa    = -5.74340
 CZadot = -0.00350
 CZq    = -5.66290
@@ -65,7 +65,7 @@ CZde   = -0.69612
 Cm0    =  0.02970
 Cmu    = +0.06990
 Cmadot = +0.17800
-Cmq    = -8.79415
+Cmq    = -18.8
 CmTc   = -0.00064
 
 CYb    = -0.7500
@@ -75,18 +75,20 @@ CYr    = +0.8495
 CYda   = -0.0400
 CYdr   = +0.2300
 
-Clb    = -0.10260
-Clp    = -0.71085
-Clr    = +0.23760
-Clda   = -0.23088
-Cldr   = +0.03440
+# Clb    = -0.10260
+Clb    = -0.107
+Clp    = -0.70
+Clr    = +0.1
+Clda   = -0.221
+Cldr   = +0.024
 
-Cnb    =  +0.1348
+# Cnb    =  +0.1348
+Cnb    =  +0.120
 Cnbdot =   0
 Cnp    =  -0.0602
-Cnr    =  -0.2061
+Cnr    =  -0.163
 Cnda   =  -0.0120
-Cndr   =  -0.0939
+Cndr   =  -0.071
 
 # ----------------------------------------------------------------------------
 #Flight dependent parameters
