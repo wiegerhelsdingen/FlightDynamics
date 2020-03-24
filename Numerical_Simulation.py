@@ -74,7 +74,7 @@ def numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
             [Clb, 0   , Clp , Clr],
             [Cnb, 0   , Cnp , Cnr]])
 
-    C_3a = np.matrix([[CYda, CYdr],
+    C_3a = -np.matrix([[CYda, CYdr],
             [0, 0 ],
             [Clda, Cldr],
             [Cnda, Cndr]])
@@ -99,10 +99,10 @@ def numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0):
     t_half_a1 = np.log(0.5)/eigenvals_a[1].real
     zeta_a1 = -eigenvals_s[1].real/np.sqrt((eigenvals_a[1].imag)**2+(eigenvals_a[1].real)**2)
     omega_a1= np.sqrt((eigenvals_a[1].imag)**2+(eigenvals_a[1].real)**2)*V0/b*np.sqrt(1-zeta_a1**2)
-    t_half_a2 = np.log(0.5)*b/(eigenvals_a[2]*V0)
-    t_cst_a2 = -b/(eigenvals_a[2]*V0)
-    t_half_a3 = -np.log(0.5)*b/(eigenvals_a[3]*V0)
-    t_cst_a3 = b/(eigenvals_a[3]*V0)
+    t_half_a2 = np.log(0.5)/(eigenvals_a[0].real)
+    t_cst_a2 = -1/(eigenvals_a[0].real)
+    t_half_a3 = -np.log(0.5)/(eigenvals_a[3].real)
+    t_cst_a3 = 1/(eigenvals_a[3].real)
 
     num_asym_par = []
     num_asym_par.append([eigenvals_a[1:3],period_a1,t_half_a1,zeta_a1,omega_a1])

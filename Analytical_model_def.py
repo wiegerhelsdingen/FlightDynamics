@@ -76,16 +76,16 @@ def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 ######### A-periodic roll motion #############
 def aperiodic_roll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_apr = Clp / (4 * mub * KX2) * V0/b
-    t_half = np.log(0.5) * b / (lambda_b_apr * V0)
-    time_cst = -b / (lambda_b_apr * V0)
+    t_half = -np.log(0.5) / (lambda_b_apr)
+    time_cst = -1 / (lambda_b_apr )
     return lambda_b_apr, t_half, time_cst
 
 
 ######### Spiral motion #############
 def spiral(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_spir = (2 * CL * (Clb * Cnr - Cnb * Clr)) / ((Clp * (CYb * Cnr + 4 * mub * Cnb )) - Cnp * (CYb * Clr + 4 * mub * Clb)) * V0/b
-    t_half = -np.log(0.5) * b / (lambda_b_spir * V0)
-    time_cst = -b / (lambda_b_spir * V0)
+    t_half = -np.log(0.5)  / (lambda_b_spir)
+    time_cst = -1 / (lambda_b_spir )
     return lambda_b_spir, t_half, time_cst
 
 ######### Dutch roll motion  case 1 #############
