@@ -457,7 +457,7 @@ x3R2=134*inc_m
 WF1=WF_mat3[0]   #kg
 WF2=WF_mat3[1]   #kg
 
-sta_ref=261.45*inc_m     #to define center of gravity with respect to imaginary foward end MAC
+sta_ref=261.56*inc_m     #to define center of gravity with respect to imaginary foward end MAC
 xcg1=centerofgravity(x3R1, WF1)[2]-sta_ref
 xcg2=centerofgravity(x3R2, WF2)[2]-sta_ref
 
