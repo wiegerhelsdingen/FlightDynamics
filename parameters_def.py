@@ -38,18 +38,18 @@ KZ2    = 0.042
 KXZ    = 0.002
 KY2    = 1.3925
 # Aerodynamic constants
-Cmac   = 0                      # Moment coefficient about the aerodynamic centre [ ]
+Cmac   = 0                      # Moment coefficient about the aerodynamicf centre [ ]
 CNwa   = CLa                    # Wing normal force slope [ ]
 CNha   = 2 * np.pi * Ah / (Ah + 2) # Stabiliser normal force slope [ ]
 depsda = 4 / (A + 2)            # Downwash gradient [ ]
 
-CXu    = -0.095
+CXu    = -0.085
 CXa    = +0.47966		# Positive! (has been erroneously negative since 1993)
 CXadot = +0.08330
 CXq    = -0.28170
 CXde   = -0.03728
 
-CZu    = -0.37616
+CZu    = -0.61616
 CZa    = -5.74340
 CZadot = -0.00350
 CZq    = -5.66290
@@ -68,16 +68,16 @@ CYr    = +0.8495
 CYda   = -0.0400
 CYdr   = +0.2300
 
-Clb    = -0.10260
-Clp    = -0.71085
+Clb    = -0.2260
+Clp    = -0.81085
 Clr    = +0.23760
 Clda   = -0.23088
 Cldr   = +0.03440
 
-Cnb    =  +0.1348
+Cnb    =  +0.0968
 Cnbdot =   0
 Cnp    =  -0.0602
-Cnr    =  -0.2061
+Cnr    =  -0.3061
 Cnda   =  -0.0120
 Cndr   =  -0.0939
 
