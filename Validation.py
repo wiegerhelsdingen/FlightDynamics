@@ -30,10 +30,10 @@ Vc  = parameters[42][2] * 0.514444444   #m/s
 th  = parameters[23][2] * np.pi/180     #rad
 q   = parameters[28][2] * np.pi/180     #rad/s
 #Asymmetric parameters
-yaw     = parameters[24][2] * np.pi/180 #rad
 roll    = parameters[22][2] * np.pi/180 #rad
 rolldot = parameters[27][2] * np.pi/180 #rad/s
 yawdot  = parameters[29][2] * np.pi/180 #rad/s
+print(parameters[22][0])
 #Force parameters
 de = parameters[18][2] * np.pi/180      #rad
 dr = parameters[19][2] * np.pi/180      #rad
@@ -43,16 +43,16 @@ spmt0    = 43*60+47.5
 spm_t    = 10
 spm_time = np.arange(0,spm_t-dt,dt)
 phugt0   = 44*60+37
-phug_t   = 180
+phug_t   = 150
 phug_time= np.arange(0,phug_t-dt,dt)
 aprt0    = 48*60+21
-apr_t    = 100
+apr_t    = 20
 apr_time = np.arange(0,apr_t-dt,dt)
 dutch1t0 = 50*60+23
-dutch1_t  = 40
+dutch1_t  = 20
 dutch1_time = np.arange(0,dutch1_t-dt,dt)
 dutch2t0 = 51*60+30
-dutch2_t = 40
+dutch2_t = 20
 dutch2_time = np.arange(0,dutch2_t-dt,dt)
 spirt0   = 55*60+1
 spir_t   = 100
@@ -106,34 +106,34 @@ def symplot(eigenmotion, time,t0,t1,AoA,Vt,Vc,th,q,force):
     num_response = ctrl.forced_response(sys, time_eigen, force)
     #Eigenvalues
     num_eigenval = num_solution[1]
-    print(num_eigenval)
-    num_response_V = num_response[1][0] /V0 -V0 #transformation
+    num_response_V = num_response[1][0]*V0 + V0 #transformation
     num_response_alpha = num_response[1][1] + alpha0 #transformation
     num_response_th = num_response[1][2] + th0 #transformation
-    num_response_q = num_response[1][3] *c/V0 +q0 #transformation
-    # # Plots
-    # fig, axs = plt.subplots(2, 2, constrained_layout=True)
-    # fig.suptitle(eigenmotion,fontsize=16)
-    # axs[0][0].plot(time_eigen, th, lw = 2, c = 'red', label='theta recorded')
-    # # axs[0][0].plot(time_eigen, num_response_th, lw = 2, c = 'blue', label='theta numerical')
-    # axs[0][0].set_ylabel('pitch angle recorded [rad]')
-    # axs[0][0].grid()
-    # axs[0][1].plot(time_eigen, AoA, lw=2, c='red', label='Ao recorded')
-    # # axs[0][1].plot(time_eigen, num_response_alpha, lw = 2, c = 'blue', label='$\alpha$ numerical')
-    # axs[0][1].set_ylabel('AoA recorded [rad]')
-    # axs[0][1].grid()
-    # axs[1][0].plot(time_eigen, Vt, lw=3, c='red', label='True airspeed recorded')
-    # # axs[1][0].plot(time_eigen, num_response_V, lw = 2, c = 'blue', label='True airspeed numerical')
-    # axs[1][0].set_ylabel('True airspeed recorded [m/s]')
-    # axs[1][0].grid()
-    # axs[1][1].plot(time_eigen, q, lw=3, c='red', label='pitch rate recorded')
-    # # axs[1][1].plot(time_eigen, num_response_q, lw = 2, c = 'blue', label='pitch rate numerical')
-    # axs[1][1].set_ylabel('pitch rate recorded [rad/s]')
-    # axs[1][1].grid()
-    # plt.show()
+    num_response_q = num_response[1][3] *V0/c + q0 #transformation
+    # Plots
+    fig, axs = plt.subplots(2, 2, constrained_layout=True)
+    fig.suptitle(eigenmotion,fontsize=16)
+    axs[0][0].plot(time_eigen, th, lw = 1, c = 'red', label='ecorded')
+    axs[0][0].plot(time_eigen, num_response_th, lw = 1, c = 'blue', label='numerical')
+    axs[0][0].set_ylabel('pitch angle [rad]')
+    axs[0][0].grid()
+    axs[0][1].plot(time_eigen, AoA, lw=1, c='red', label='recorded')
+    axs[0][1].plot(time_eigen, num_response_alpha, lw = 1, c = 'blue', label='numerical')
+    axs[0][1].set_ylabel('AoA [rad]')
+    axs[0][1].grid()
+    axs[1][0].plot(time_eigen, Vt, lw=1, c='red', label='recorded')
+    axs[1][0].plot(time_eigen, num_response_V, lw = 1, c = 'blue', label='numerical')
+    axs[1][0].set_ylabel('True airspeed [m/s]')
+    axs[1][0].grid()
+    axs[1][1].plot(time_eigen, q, lw=1, c='red', label='recorded')
+    axs[1][1].plot(time_eigen, num_response_q, lw = 1, c = 'blue', label='numerical')
+    axs[1][1].set_ylabel('pitch rate [rad/s]')
+    axs[1][1].grid()
+    axs[0][1].legend(bbox_to_anchor=( -0.016 , 1 ),loc=3,fontsize='medium' )
+    plt.show()
     return num_response, num_eigenval
 
-def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
+def asymplot(eigenmotion,time,t0,t1,roll,rolldot,yawdot,force1,force2):
     #------------------------------------
     #Specific time interval for eigenmotion
     #------------------------------------
@@ -157,7 +157,6 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     alpha0 = AoA[i_t0]
     th0 = th[i_t0]
     V0 = Vt[i_t0]
-    yaw0 = yaw[i_t0]
     roll0 = roll[i_t0]
     rolldot0 = rolldot[i_t0]
     yawdot0 = yawdot[i_t0]
@@ -169,7 +168,6 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     #------------------------------------
     #Experimental response
     #------------------------------------
-    yaw = yaw[interval]
     roll = roll[interval]
     rolldot = rolldot[interval]
     yawdot = yawdot[interval]
@@ -178,7 +176,7 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     #Numerical response and eigenvalues
     #------------------------------------
     #Flight dependent variables
-    m,rho,W,muc,mub,CL,CD,CX0,CZ0 = eigenmotion_parameters(time,t0)
+    V0,m,rho,muc,mub,CL,CD,CX0,CZ0 = eigenmotion_parameters(time,t0)
     #Numerical solution
     num_solution = numres(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
     sys = num_solution[2]
@@ -186,36 +184,34 @@ def asymplot(eigenmotion,time,t0,t1,yaw,roll,rolldot,yawdot,force1,force2):
     num_response = ctrl.forced_response(sys, time_eigen, force)
     #Eigenvalues
     num_eigenval = num_solution[3]
-    print(num_eigenval)
-    num_response_yaw = num_response[1][0]
-    num_response_roll = num_response[1][1]
-    num_response_rolldot = num_response[1][2] * b/(2*V0)
-    numr_response_yawdot = num_response[1][3] * b/(2*V0)
+    num_response_yaw = -num_response[1][0]
+    num_response_roll = -num_response[1][1] + roll0
+    num_response_rolldot = -num_response[1][2] * (2*V0)/b + rolldot0
+    numr_response_yawdot = -num_response[1][3] * (2*V0)/b + yawdot0
 
     #------------------------------------
     # Plots
     #------------------------------------
-    # plt.subplot(411)
-    # plt.plot(time_eigen, yaw, lw = 2, c = 'red', label='$\beta$ recorded')
-    # plt.plot(time_eigen, num_response_yaw, lw = 2, c = 'blue', label='$beta$ numerical')
-    # plt.ylabel('$\beta$ recorded [rad]')
-    # plt.grid()
-    # plt.subplot(412)
-    # plt.plot(time_eigen, roll, lw=3, c='red', label='$\phi$ recorded')
-    # plt.plot(time_eigen, num_response_roll, lw = 2, c = 'blue', label='$phi$ numerical')
-    # plt.ylabel('$\phi$ recorded [rad]')
-    # plt.grid()
-    # plt.subplot(413)
-    # plt.plot(time_eigen, rolldot, lw=3, c='red', label='roll rate recorded')
-    # plt.plot(time_eigen, num_response_rolldot, lw = 2, c = 'blue', label='roll rate numerical')
-    # plt.ylabel('roll rate recorded [m/s]')
-    # plt.grid()
-    # plt.subplot(414)
-    # plt.plot(time_eigen, yawdot, lw=3, c='red', label='yaw rate recorded')
-    # plt.plot(time_eigen, numr_response_yawdot, lw = 2, c = 'blue', label='yaw rate numerical')
-    # plt.ylabel('yaw rate recorded [1/s]')
-    # plt.grid()
-    # plt.show()
+    fig, axs = plt.subplots(2, 2, constrained_layout=True)
+    fig.suptitle(eigenmotion,fontsize=16)
+    # axs[0][0].plot(time_eigen, yaw, lw = 2, c = 'red', label='$\beta$ recorded')
+    axs[0][0].plot(time_eigen, num_response_yaw, lw = 1, c = 'blue', label=' numerical')
+    axs[0][0].set_ylabel('yaw angle [rad]')
+    axs[0][0].grid()
+    axs[0][1].plot(time_eigen, roll, lw=1, c='red', label='recorded')
+    axs[0][1].plot(time_eigen, num_response_roll, lw = 1, c = 'blue', label='numerical')
+    axs[0][1].set_ylabel('$roll angle [rad]')
+    axs[0][1].grid()
+    axs[1][0].plot(time_eigen, rolldot, lw=1, c='red', label=' recorded')
+    axs[1][0].plot(time_eigen, num_response_rolldot, lw = 1, c = 'blue', label=' numerical')
+    axs[1][0].set_ylabel('roll rate [m/s]')
+    axs[1][0].grid()
+    axs[1][1].plot(time_eigen, yawdot, lw=1, c='red', label='recorded')
+    axs[1][1].plot(time_eigen, numr_response_yawdot, lw = 1, c = 'blue', label='numerical')
+    axs[1][1].set_ylabel('yaw rate [1/s]')
+    axs[1][1].grid()
+    axs[0][1].legend(bbox_to_anchor=( -0.016 , 1 ),loc=3,fontsize='medium' )
+    plt.show()
     return num_response, num_eigenval
 
 #Short period motion
@@ -223,9 +219,9 @@ numres_spm, numeigen_spm = symplot('short period',time,spmt0,spm_t,AoA,Vt,Vc,th,
 #Phugoid motion
 numres_phug, numeigen_spm = symplot('phugoid',time,phugt0,phug_t,AoA,Vt,Vc,th,q,de)
 #Aperiodic roll motion
-numres_apr, numeigen_apr = asymplot('aperiodic roll',time,aprt0,apr_t,yaw,roll,rolldot,yawdot,da,dr)
+numres_apr, numeigen_apr = asymplot('aperiodic roll',time,aprt0,apr_t,roll,rolldot,yawdot,da,dr)
 #Spiral motion
-numres_spir, numeigen_spir = asymplot('spiral',time,spirt0,spir_t,yaw,roll,rolldot,yawdot,da,dr)
+numres_spir, numeigen_spir = asymplot('spiral',time,spirt0,spir_t,roll,rolldot,yawdot,da,dr)
 #Dutch roll motion
-numres_dutch1, numeigen_dutch1 = asymplot('dutch roll 1',time,dutch1t0,dutch1_t,yaw,roll,rolldot,yawdot,da,dr)
-numres_dutch2, numeigen_dutch2 = asymplot('dutch roll 2',time,dutch2t0,dutch2_t,yaw,roll,rolldot,yawdot,da,dr)
+numres_dutch1, numeigen_dutch1 = asymplot('dutch roll 1',time,dutch1t0,dutch1_t,roll,rolldot,yawdot,da,dr)
+numres_dutch2, numeigen_dutch2 = asymplot('dutch roll 2',time,dutch2t0,dutch2_t,roll,rolldot,yawdot,da,dr)

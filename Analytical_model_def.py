@@ -152,7 +152,7 @@ def dutchroll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     C_dutch = 4 * mub * Cnb + CYb * Cnr
 
     dutch_char = np.poly1d([A_dutch, B_dutch, C_dutch])
-    lambda_b_dutch = np.roots(dutch_char) #misschien V0/b toevoegen eraan
+    lambda_b_dutch = np.roots(dutch_char) * V0/b
     period_dutch = 2 * np.pi / abs(lambda_b_dutch[0].imag) * b/V0
     t_half_dutch = np.log(0.5) / lambda_b_dutch[0].real * b/V0
     zeta_dutch = -lambda_b_dutch[0].real / np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2)

@@ -87,7 +87,7 @@ def recdata(datapath):
             unit = "no unit"
         # if not name == 'Deflection of the control column (Se or DCOC)':
         parameters.append([name, unit, value])
-
+        # print(name,unit)
         # print(i,name)
     return parameters
 
