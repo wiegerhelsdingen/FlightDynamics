@@ -76,6 +76,8 @@ def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 ######### A-periodic roll motion #############
 def aperiodic_roll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_apr = Clp / (4 * mub * KX2) * V0/b
+    t_half = np.log(0.5) / (lambda_b_apr )
+    time_cst = -1 / (lambda_b_apr)
     t_half = -np.log(0.5) / (lambda_b_apr)
     time_cst = -1 / (lambda_b_apr )
     return lambda_b_apr, t_half, time_cst
@@ -84,6 +86,8 @@ def aperiodic_roll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 ######### Spiral motion #############
 def spiral(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_spir = (2 * CL * (Clb * Cnr - Cnb * Clr)) / ((Clp * (CYb * Cnr + 4 * mub * Cnb )) - Cnp * (CYb * Clr + 4 * mub * Clb)) * V0/b
+    t_half = -np.log(0.5) / (lambda_b_spir)
+    time_cst = -1 / (lambda_b_spir)
     t_half = -np.log(0.5)  / (lambda_b_spir)
     time_cst = -1 / (lambda_b_spir )
     return lambda_b_spir, t_half, time_cst
@@ -112,12 +116,14 @@ def dutchroll_2(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_b_dutch2_1 = (-B_dutch2 + np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2) * V0/b
     lambda_b_dutch2_2 = (-B_dutch2 - np.sqrt(4 * A_dutch2 * C_dutch2 - B_dutch2 **2)) / (2 * A_dutch2) * V0/b
     return lambda_b_dutch2_1, lambda_b_dutch2_2
+
 #
 # print()
 # print("Short period motion:")
 # print(short_period(V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm))
 # print()
 # print("Phugoid: ")
+# print(phugoid(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug))
 # print(puhgoid(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug))
 # print()
 # print("A-periodic roll")
@@ -128,3 +134,5 @@ def dutchroll_2(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 # print()
 # print("Dutch roll")
 # print(dutchroll(V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch))
+# print(dutchroll(V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch))
+

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 24 18:55:57 2020
+
+@author: Xander
+"""
+
 import numpy as np
 from math import *
 from Data_extraction import *
@@ -12,12 +19,12 @@ W_empty = 9165*0.453592 #kg
 bf_kg = 4100*0.453592  #kg
 masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 # aerodynamic properties
-e      = 0.8         # Oswald factor [ ]
-CD0    = 0.04        # Zero lift drag coefficient [ ]
-CLa    = 4.68 #5.084       # Slope of CL-alpha curve [ ]
+e      = 0.7801476741816539        # Oswald factor [ ]
+CD0    = 0.02301940091938726        # Zero lift drag coefficient [ ]
+CLa    = 4.811043026997966 #5.084       # Slope of CL-alpha curve [ ]
 # Longitudinal stability
-Cma    = -0.58256477 #-0.5626     # longitudinal stabilty [ ]
-Cmde   = -1.21166653 #-1.1642     # elevator effectiveness [ ]
+Cma    = -0.55009481 #-0.5626     # longitudinal stabilty [ ]
+Cmde   = -1.14680232 #-1.1642     # elevator effectiveness [ ]
 # Aircraft geometry
 S      = 30.00	          # wing area [m^2]
 Sh     = 0.2 * S         # stabiliser area [m^2]
@@ -79,7 +86,7 @@ Cnbdot =   0
 Cnp    =  -0.0602
 Cnr    =  -0.2061
 Cnda   =  -0.0120
-Cndr   =  -0.0739
+Cndr   =  -0.0939
 
 # ----------------------------------------------------------------------------
 #Flight dependent parameters

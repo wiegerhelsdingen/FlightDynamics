@@ -5,12 +5,12 @@ import math
 import matplotlib.pyplot as plt
 
 #cl-cd series 1
-mat1 = np.matrix([[7000,248,13.8,745,803,367,1.7],
-                     [7000,221,11.8,641,687,400,2.5],
-                     [6980,188,9.2,548,593,430,3.7],
-                     [7000,162,7.8,456,502,470,5.5],
-                     [7000,140,6.8,438,472,497,7.7],
-                     [6980,120,5.8,456,507,515,10.6]])
+mat1 = np.matrix([[7000,248,1.7,745,803,367,13.8],
+                     [7000,221,2.5,641,687,400,11.8],
+                     [6980,188,3.7,548,593,430,9.2],
+                     [7000,162,5.5,456,502,470,7.8],
+                     [7000,140,7.7,438,472,497,6.8],
+                     [6980,120,10.6,456,507,515,5.8]])
 #elevator trim curve
 mat2 = np.matrix([[7120,162,5.5,-0.2,2.6,0,472,513,580,8.5],
                 [7420,152,6.3,-0.7,2.6,-11,465,506,602,7.8],
@@ -62,12 +62,12 @@ bf_kg = blockfuel*0.453592  #kg
 #mat1 
 h_mat1 = mat1[:,0]*0.3048           # m
 IAS_mat1 = mat1[:,1]*0.514444       # m/s
-TAT_mat1 = mat1[:,2]+273.15         #temperature
+TAT_mat1 = mat1[:,6]+273.15         #temperature
 FFL_mat1 = mat1[:,3]* (1/7936.64)   # kg/s
 FFR_mat1 = mat1[:,4]* (1/7936.64)   #kg/s
 WF_mat1 = mat1[:,5]* 0.453592       #kg
 WF_mat1_lbs = mat1[:,5]              #lbs needed for cg 
-AOA_mat1 = mat1[:,6]                #degree  
+AOA_mat1 = mat1[:,2]                #degree  
 
 #mat2
 h_mat2 = mat2[:,0]*0.3048           # m
@@ -353,11 +353,11 @@ CLA_ALPHA.insert(0,alphacl0)
 CLA_CL.insert(0,rootcl0)
 
 plt.figure(1)
-plt.scatter(CLA_ALPHA,CLA_CL, label='Measured data')
-plt.xlabel('angle of attack [radians]')
-plt.ylabel('lift coefficient [-]')
+plt.scatter(CLA_ALPHA,CLA_CL, label='Measurement data')
+plt.xlabel(r'$\alpha$ [$\degree$]')
+plt.ylabel(r'$C_L$ [-]')
 plt.grid()
-plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-", label='Regression line')
+plt.plot(CLA_ALPHA,t(CLA_ALPHA),"r-", label='Linear regression line')
 print("y=%.6fx+%.6f"%(z[0],z[1])) 
 plt.legend(loc ="upper left")
 plt.show()
@@ -366,14 +366,14 @@ CLA_GRAD = z[0]
 #%% Cd-alpha curve
 #SECOND ORDER
 plt.figure(2)
-plt.scatter(alpha,Cd_mat1_list, label='Measured data')
-plt.xlabel('angle of attack [degrees]')
-plt.ylabel('drag coefficient [-]')
+plt.scatter(alpha,Cd_mat1_list, label='Measurement data')
+plt.xlabel(r'$\alpha$ [$\degree$]')
+plt.ylabel(r'$C_D$ [-]')
 plt.title('DRAG - ALPHA')
 plt.grid()
 zz=np.polyfit(alpha,Cd_mat1_list,2)
 tt=np.poly1d(zz)    
-plt.plot(alphalist,tt(alphalist),"r-", label='Regression line')
+plt.plot(alphalist,tt(alphalist),"r-", label='2nd degree polynomial fit')
 plt.legend(loc ="upper left")
 plt.show()
 
@@ -390,10 +390,9 @@ CLCD_CL.insert(0,0)
 CLCD_CD.insert(0,t2root)
 
 plt.figure(3)
-plt.scatter(CLCD_CD, CLCD_CL, label='Measured data')
-plt.xlabel('drag coefficient [-]')
-plt.ylabel('lift coefficient [-]')
-plt.title('LIFT - DRAG')
+plt.scatter(CLCD_CD, CLCD_CL, label='Measurement data')
+plt.xlabel(r'$C_D$ [-]')
+plt.ylabel(r'$C_L$ [-]')
 plt.grid()
 CDCL=np.polyfit(CLCD_CD[0:3],CLCD_CL[0:3],3)
 t2=np.poly1d(CDCL)
@@ -401,7 +400,7 @@ cdlist = np.linspace(t2root,CLCD_CD[2],100)
 CDCL_rest = np.polyfit(CLCD_CD[2:7],CLCD_CL[2:7],3)
 t2_rest =np.poly1d(CDCL_rest)
 cdlist_rest = np.linspace(CLCD_CD[2],CLCD_CD[6],100)
-plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-", label='Regression line')
+plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-", label='2nd degree polynomial line')
 plt.plot(cdlist,t2(cdlist),"r-")
 plt.legend(loc ="upper left")
 plt.show()
@@ -427,12 +426,11 @@ CL2CD_CL2.insert(0,CL2CD_CL0)
 CL2CD_CD.insert(0,rootCL2CD0)
 
 plt.figure(4)
-plt.scatter(CL2CD_CL2, CL2CD_CD, label='Measured data')
-plt.xlabel('lift coefficient^2 [-]')
-plt.ylabel('drag coefficient [-]')
-plt.title('LIFT^2 - DRAG')
+plt.scatter(CL2CD_CL2, CL2CD_CD, label='Measurement data')
+plt.xlabel(r'$C_L^2$ [-]')
+plt.ylabel(r'$C_d$ [-]')
 plt.grid()
-plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-", label='Regression line')
+plt.plot(CL2CD_CL2,t3(CL2CD_CL2),"r-", label='Linear regression line')
 plt.legend(loc ="upper left")
 plt.show()
 
@@ -449,7 +447,7 @@ CD0 = t2root
 CLVAL = np.linspace(0,1,100)
 CDVAL = CD0 + (CLVAL**2)/(math.pi*e*A)
 plt.figure(3)
-plt.plot(CDVAL,CLVAL,'g', label='CD standard formula')
+plt.plot(CDVAL,CLVAL,'g', label=r'Standard formula for aircraft $C_D$')
 plt.legend(loc ="upper left")
 plt.show()
 #%% Code for center gravity shit
@@ -459,7 +457,7 @@ x3R2=134*inc_m
 WF1=WF_mat3[0]   #kg
 WF2=WF_mat3[1]   #kg
 
-sta_ref=261.45*inc_m     #to define center of gravity with respect to imaginary foward end MAC
+sta_ref=261.56*inc_m     #to define center of gravity with respect to imaginary foward end MAC
 xcg1=centerofgravity(x3R1, WF1)[2]-sta_ref
 xcg2=centerofgravity(x3R2, WF2)[2]-sta_ref
 
@@ -577,23 +575,21 @@ FeVeq =np.polyfit(Vred2list,Fstlist,2)
 Fveq = np.poly1d(FeVeq)
 vlist = np.linspace(min(Vred2list),max(Vred2list),100)
 plt.figure(7)
-plt.scatter(Vred2list, delta_redlist, label = 'Measured data')
+plt.scatter(Vred2list, delta_redlist, label = 'Computed reduced elevator deflection')
 plt.grid()
-plt.xlabel('Reduced velocity [m/s]')
-plt.ylabel('Reduced elevator deflection [m]')
-plt.plot(vlist,dveq(vlist),"r-",label = 'Regression line')
+plt.xlabel(r'$\widetilde{V_e}$ [m/s]')
+plt.ylabel(r'${\delta_{eq}}^*$ [rad]')
+plt.plot(vlist,dveq(vlist),"r-",label = '2nd degree polynomial fit')
 plt.gca().invert_yaxis()
-plt.title('Reduced velocity [m/s] vs. Reduced elevator deflection [m]')
 plt.legend(loc = 'upper right')
 plt.show()
 
 plt.figure(8)
-plt.scatter(Vred2list, Fstlist, label = 'Measured data')
-plt.xlabel('Reduced velocity [m/s]')
-plt.ylabel('Elevator force [N]')
+plt.scatter(Vred2list, Fstlist, label = 'Computed reduced elevator control force')
+plt.xlabel(r'$\widetilde{V_e}$ [m/s]')
+plt.ylabel(r'${F_e}^*$ [N]')
 plt.gca().invert_yaxis()
-plt.plot(vlist,Fveq(vlist),"r-",label = 'Regression line')
-plt.title('Reduced velocity [m/s] vs. Elevator force [N]')
+plt.plot(vlist,Fveq(vlist),"r-",label = '2nd degree polynomial fit')
 plt.grid()
 plt.legend(loc = 'upper right')
 plt.show()
