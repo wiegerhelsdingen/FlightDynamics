@@ -10,63 +10,6 @@ from math import *
 import cmath as cmath
 from parameters import *
 
-# # A i r c r a f t & Atmospheric p r op e r t i e s
-# g = 9.81 #m/ s^2
-# m = 6100 #kg
-# rho = 0.89 #kg /m^3
-# S = 30 #m^2
-# c = 2.0569 #m
-# b = 15.911 #m
-# K_yy = 1.3925**( 0.5 )
-# KY2 = 1.3925
-# K_xx = 0.019**( 1/ 2 )
-# KX2 = 0.019
-# K_zz = 0.042**( 1/ 2 )
-# KZ2 = 0.042
-# K_xz = 0.002
-# muc = m / ( rho * S * c)
-# mub = m / ( rho * S * b )
-# V0 = 88 #m/ s
-# theta = 4.5 #deg
-# theta = theta *np.pi /180 #rad
-# CL = 2*m*g / ( rho * V0 ** 2 * S )
-# #Symmetric f l i g h t p r op e r t i e s
-# CXu = -0.0279
-# CXa = -0.4797
-# CXadot = 0.0833
-# CXq = -0.2817
-# CX0 = m * g * np.sin(theta) / ( 0.5 *rho * V0 ** 2. * S )
-# CXdelta = -0.0373
-# CZ0 = - m * g * np.cos(theta) / ( 0.5 *rho * V0 ** 2. * S )
-# CZa = -5.7434*1.15 #was −5.7437
-# CZadot = -0.0035
-# CZu = -0.37616*1.5 #was −0.37616
-# CZq = -5.6629
-# CZdelta = -0.6961
-# Cmu = 0.0699
-# Cma = -0.7317 #was −0.5626 −−> rece i ved value from s t a t . measurements
-# Cmadot = 0.1780
-# Cmq = -8.7941
-# Cmdelta = -1.75631 #was −1.1642 −−> rece i ved value from s t a t . measurements
-# #Asymmetric p r op e r t i e s
-# CYb = -0.75
-# CYbeta_dot = 0
-# CYp = -0.0304
-# CYr = 0.8495
-# C_Y_delta_a = 0.04 #−0.04
-# C_Y_delta_r = -0.23 # 0.23
-# Clb = -0.1026
-# Clp = -0.7108
-# Clr = 0.2376
-# C_l_delta_a = 0.2309 #−0.2309
-# C_l_delta_r = -0.0344 #0.0344
-# Cnb = 0.1348
-# C_n_beta_dot = 0
-# Cnp = 0.1502 #was −0.0602
-# Cnr = -0.2061
-# C_n_delta_a = 0.012 #−0.012
-# C_n_delta_r = 0.0939 #−0.0939
-
 
 ######### Short period motion #############
 def short_period(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
@@ -81,8 +24,8 @@ def short_period(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
     lambda_c_spm1 = (-B_spm + 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
     lambda_c_spm2 = (-B_spm - 1j*cmath.sqrt(4 * A_spm * C_spm - B_spm **2)) / (2 * A_spm) *V0/c
-    period_spm = 2*np.pi/abs(lambda_c_spm1.imag) #* c/V0
-    t_half_spm = np.log(0.5)/lambda_c_spm1.real #* c/V0
+    period_spm = 2*np.pi/abs(lambda_c_spm1.imag) 
+    t_half_spm = np.log(0.5)/lambda_c_spm1.real
     zeta_spm  = -lambda_c_spm1.real / np.sqrt((lambda_c_spm1.imag)**2+(lambda_c_spm1.real)**2)
     omega_n_spm = np.sqrt((lambda_c_spm1.imag)**2+(lambda_c_spm1.real)**2) * V0/c * np.sqrt(1-zeta_spm**2)
 
@@ -111,8 +54,8 @@ def phugoid(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
     lambda_c_phug1 = (-B_phug_1 + 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) *V0/c
     lambda_c_phug2 = (-B_phug_1 - 1j*cmath.sqrt(4 * A_phug_1 * C_phug_1 - B_phug_1 **2)) / (2 * A_phug_1) *V0/c
 
-    period_phug = 2*np.pi/abs(lambda_c_phug1.imag) * c/V0
-    t_half_phug = np.log(0.5)/lambda_c_phug1.real * c/V0
+    period_phug = 2*np.pi/abs(lambda_c_phug1.imag) 
+    t_half_phug = np.log(0.5)/lambda_c_phug1.real 
     zeta_phug  = -lambda_c_phug1.real / np.sqrt((lambda_c_phug1.imag)**2+(lambda_c_phug1.real)**2)
     omega_n_phug = np.sqrt((lambda_c_phug1.imag)**2+(lambda_c_phug1.real)**2) * V0/c * np.sqrt(1-zeta_phug**2)
 
@@ -153,8 +96,8 @@ def dutchroll(V0, m, rho, muc, mub, CL, CD, CX0, CZ0):
 
     dutch_char = np.poly1d([A_dutch, B_dutch, C_dutch])
     lambda_b_dutch = np.roots(dutch_char) * V0/b
-    period_dutch = 2 * np.pi / abs(lambda_b_dutch[0].imag) * b/V0
-    t_half_dutch = np.log(0.5) / lambda_b_dutch[0].real * b/V0
+    period_dutch = 2 * np.pi / abs(lambda_b_dutch[0].imag) 
+    t_half_dutch = np.log(0.5) / lambda_b_dutch[0].real 
     zeta_dutch = -lambda_b_dutch[0].real / np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2)
     omega_n_dutch = np.sqrt((lambda_b_dutch[0].imag)**2+(lambda_b_dutch[0].real)**2) * V0/b * np.sqrt(1-zeta_dutch**2)
     return lambda_b_dutch[0], lambda_b_dutch[1], period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch

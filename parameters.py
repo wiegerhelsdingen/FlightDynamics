@@ -44,7 +44,7 @@ CNha   = 2 * np.pi * Ah / (Ah + 2) # Stabiliser normal force slope [ ]
 depsda = 4 / (A + 2)            # Downwash gradient [ ]
 
 CXu    = -0.02792
-CXa    = +0.47966		# Positive! (has been erroneously negative since 1993)
+CXa    = -0.47966		# Positive! (has been erroneously negative since 1993)
 CXadot = +0.08330
 CXq    = -0.28170
 CXde   = -0.03728
