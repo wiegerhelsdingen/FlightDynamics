@@ -5,12 +5,12 @@ import math
 import matplotlib.pyplot as plt
 """
 #cl-cd series 1
-mat1 = np.matrix([[7000,248,13.8,745,803,367,1.7],
-                     [7000,221,11.8,641,687,400,2.5],
-                     [6980,188,9.2,548,593,430,3.7],
-                     [7000,162,7.8,456,502,470,5.5],
-                     [7000,140,6.8,438,472,497,7.7],
-                     [6980,120,5.8,456,507,515,10.6]])
+mat1 = np.matrix([[7000,248,1.7,745,803,367,13.8],
+                     [7000,221,2.5,641,687,400,11.8],
+                     [6980,188,3.7,548,593,430,9.2],
+                     [7000,162,5.5,456,502,470,7.8],
+                     [7000,140,7.7,438,472,497,6.8],
+                     [6980,120,10.6,456,507,515,5.8]])
 #elevator trim curve
 mat2 = np.matrix([[7120,162,5.5,-0.2,2.6,0,472,513,580,8.5],
                 [7420,152,6.3,-0.7,2.6,-11,465,506,602,7.8],
@@ -51,11 +51,11 @@ thrust2_s =np.matrix([[1346.94, 1346.94],
                       [1318.04, 1318.04],
                       [1266.70, 1266.70],
                       [1211.88, 1211.88]])
-"""
+
 # paramters
 W_empty = 9165*0.453592 #kg
-blockfuel = 4050 #lbs
-"""
+blockfuel = 4100 #lbs
+
 masspas = np.array([90,102,80,83,94,84,74,79,103]) #kg
 """
 #%%----------- REFERENCE DATA -------------------------
@@ -81,7 +81,10 @@ mat3 = np.matrix([[5730,161,5.3,0.0,2.8,0.0,471,493,881,5.0],
                   [5790,161,5.3,-0.5,2.8,-30,468,490,910,5.0]])
 
 #payload
-masspas = np.array([95,92,74,66,61,75,78,68,86])    #kg
+# paramters
+W_empty = 9165*0.453592 #kg
+blockfuel = 4050 #lbs
+masspas = np.array([95,92,74,66,61,75,78,86,68])    #kg
 
 #thrust computations from thrust.exe for first measurement series, in N
 thrust = np.matrix([[3643.31,3746.28],
@@ -250,7 +253,7 @@ ft_m=0.3048
 lbsin_kgm = 1/86.796166214519 # lbs inches to kg m
 
 #change everything so that unit change xcg only happens at the end
-masspas = np.array([95,92,74,66,61,75,78,86,68]) #kg
+
 #passenger weights [kg]
 WP1=masspas[0]
 WP2=masspas[1]
@@ -398,7 +401,7 @@ print("y=%.6fx+%.6f"%(z[0],z[1]))
 plt.show()
 
 CLA_GRAD = z[0]
-print("CLalpha = ",CLA_GRAD)
+print("CLalpha = ",CLA_GRAD*57.2957795)
 #%% Cd-alpha curve
 """
 #SECOND ORDER
@@ -441,9 +444,9 @@ cdlist_rest = np.linspace(CLCD_CD[2],CLCD_CD[6],100)
 plt.plot(cdlist_rest,t2_rest(cdlist_rest),"r-")
 plt.plot(cdlist,t2(cdlist),"r-")
 plt.show()
-
-print("CD0=", t2root)
 """
+print("CD0=", t2root)
+
 
 #%% Cl^2-Cd plot
 #FIRST ORDER
@@ -479,11 +482,11 @@ CL2CDGRAD = t3[1]
 
 
 #%% Oswald efficiency factor
-"""
+
 #CD = CD0 + (CLa * alpha0) ** 2 / (math.pi * A * e) # Drag coefficient [-]
 e = 1 / (math.pi * A * CL2CDGRAD)
 print('oswald efficiency factor e =', e)
-"""
+
 #%% Code for center gravity shit
 
 x3R1=x3          #m
@@ -491,15 +494,16 @@ x3R2=134*inc_m
 WF1=WF_mat3[0]   #kg
 WF2=WF_mat3[1]   #kg
 
-sta_ref=261.45*inc_m     #to define center of gravity with respect to imaginary foward end MAC
+sta_ref=261.56*inc_m     #to define center of gravity with respect to imaginary foward end MAC
 xcg1=centerofgravity(x3R1, WF1)[2]-sta_ref
 xcg2=centerofgravity(x3R2, WF2)[2]-sta_ref
 
 delta_xcg=xcg2-xcg1   #this turns out negative, define xcg from MAC for it to become positive??  
+"""
 print('center gravity 1', xcg1, 'm', xcg1*m_inc, 'inch')
 print('center gravity 2', xcg2, 'm', xcg2*m_inc, 'inch')
 print('change center gravity', delta_xcg, 'm')   
-
+"""
 
 #%% Elevator effectiveness
 
@@ -508,9 +512,9 @@ def elevatoreffectiveness():
     delta_e2 = DE_mat3[1]
     delta_e = delta_e2-delta_e1
     delta_e_rad = np.radians(delta_e)
-    W3=float(weight(WF_mat3[0]))    # WHICH MEASUREMENT OF THE TWO FOR USED FUEL TO USE HERE?
+    W3=float(weight(WF_mat3[0]))    
     
-    hp3=float(h_mat3[0])            # TAKE AVERAGE OF BOTH VALUES OR ASSUME ONE?
+    hp3=float(h_mat3[0])            
     ias3=float(IAS_mat3[0])
     cas3=ias_cas(ias3)
     Vc3=cas3
@@ -527,8 +531,8 @@ def elevatoreffectiveness():
 
 elevator_effectiveness=elevatoreffectiveness()[0]
 delta=elevatoreffectiveness()[1]
-print(delta)
-print('elevator effectivenenss [-] = ', elevator_effectiveness)
+#print('change trim deflection [rad] = ', delta)
+print('Cm delta = ', elevator_effectiveness)
 
 #%% cm alpha
 
