@@ -6,28 +6,28 @@ from Numerical_Simulation import *
 
 #Flight dependent paramters
 V0,m,rho,muc,mub,CL,CD,CX0,CZ0 = eigenmotion_parameters(time,spmt0)
-V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm = eigenmotion_parameters(time,spmt0)
-V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug = eigenmotion_parameters(time,phugt0)
-V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr = eigenmotion_parameters(time,aprt0)
-V0_spir, m_spir, rho_spir, muc_spir, mub_spir, CL_spir, CD_spir, CX0_spir, CZ0_spir = eigenmotion_parameters(time,spirt0)
-V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch = eigenmotion_parameters(time,dutch1t0)
+# V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm = eigenmotion_parameters(time,spmt0)
+# V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug = eigenmotion_parameters(time,phugt0)
+# V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr = eigenmotion_parameters(time,aprt0)
+# V0_spir, m_spir, rho_spir, muc_spir, mub_spir, CL_spir, CD_spir, CX0_spir, CZ0_spir = eigenmotion_parameters(time,spirt0)
+# V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch = eigenmotion_parameters(time,dutch1t0)
 
 
 #-------------------------------------------------------------------------------------------------------------
 #Analytical model
 #-------------------------------------------------------------------------------------------------------------
-# lambda_c_spm1, lambda_c_spm2, period_spm, t_half_spm, zeta_spm, omega_n_spm = short_period(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
-# lambda_c_phug1, lambda_c_phug2, period_phug, t_half_phug, zeta_phug, omega_n_phug = phugoid(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
-# lambda_b_apr, t_half_apr, time_cst_apr = aperiodic_roll(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
-# lambda_b_spir, t_half_spir, time_cst_spir = spiral(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
-# lambda_b_dutch1, lambda_b_dutch2, period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch = dutchroll(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
+lambda_c_spm1, lambda_c_spm2, period_spm, t_half_spm, zeta_spm, omega_n_spm = short_period(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
+lambda_c_phug1, lambda_c_phug2, period_phug, t_half_phug, zeta_phug, omega_n_phug = phugoid(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
+lambda_b_apr, t_half_apr, time_cst_apr = aperiodic_roll(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
+lambda_b_spir, t_half_spir, time_cst_spir = spiral(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
+lambda_b_dutch1, lambda_b_dutch2, period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch = dutchroll(V0,m,rho,muc,mub,CL,CD,CX0,CZ0)
 
 
-lambda_c_spm1, lambda_c_spm2, period_spm, t_half_spm, zeta_spm, omega_n_spm = short_period(V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm)
-lambda_c_phug1, lambda_c_phug2, period_phug, t_half_phug, zeta_phug, omega_n_phug = phugoid(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug)
-lambda_b_apr, t_half_apr, time_cst_apr = aperiodic_roll(V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr)
-lambda_b_spir, t_half_spir, time_cst_spir = spiral(V0_spir, m_spir, rho_spir, muc_spir, mub_spir, CL_spir, CD_spir, CX0_spir, CZ0_spir)
-lambda_b_dutch1, lambda_b_dutch2, period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch = dutchroll(V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch)
+# lambda_c_spm1, lambda_c_spm2, period_spm, t_half_spm, zeta_spm, omega_n_spm = short_period(V0_spm, m_spm, rho_spm, muc_spm, mub_spm, CL_spm, CD_spm, CX0_spm, CZ0_spm)
+# lambda_c_phug1, lambda_c_phug2, period_phug, t_half_phug, zeta_phug, omega_n_phug = phugoid(V0_phug, m_phug, rho_phug, muc_phug, mub_phug, CL_phug, CD_phug, CX0_phug, CZ0_phug)
+# lambda_b_apr, t_half_apr, time_cst_apr = aperiodic_roll(V0_apr, m_apr, rho_apr, muc_apr, mub_apr, CL_apr, CD_apr, CX0_apr, CZ0_apr)
+# lambda_b_spir, t_half_spir, time_cst_spir = spiral(V0_spir, m_spir, rho_spir, muc_spir, mub_spir, CL_spir, CD_spir, CX0_spir, CZ0_spir)
+# lambda_b_dutch1, lambda_b_dutch2, period_dutch, t_half_dutch, zeta_dutch, omega_n_dutch = dutchroll(V0_dutch, m_dutch, rho_dutch, muc_dutch, mub_dutch, CL_dutch, CD_dutch, CX0_dutch, CZ0_dutch)
 
 print("ANALYTICAL MODEL:")
 print("short_period")
